@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.trial.mapper.CardTableHeaderMapper">
+    
+    <resultMap type="CardTableHeader" id="CardTableHeaderResult">
+        <result property="headerCode"    column="header_code"    />
+        <result property="parentCode"    column="parent_code"    />
+        <result property="headerSort"    column="header_sort"    />
+        <result property="headerLabel"    column="header_label"    />
+        <result property="headerValue"    column="header_value"    />
+        <result property="cardType"    column="card_type"    />
+        <result property="cssClass"    column="css_class"    />
+        <result property="listClass"    column="list_class"    />
+        <result property="isDefault"    column="is_default"    />
+        <result property="status"    column="status"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectCardTableHeaderVo">
+        select header_code, parent_code, header_sort, header_label, header_value, card_type, css_class, list_class, is_default, status, create_by, create_time, update_by, update_time, remark from card_table_header
+    </sql>
+
+    <select id="selectCardTableHeaderList" parameterType="CardTableHeader" resultMap="CardTableHeaderResult">
+        <include refid="selectCardTableHeaderVo"/>
+        <where>  
+            <if test="parentCode != null "> and parent_code = #{parentCode}</if>
+            <if test="headerSort != null "> and header_sort = #{headerSort}</if>
+            <if test="headerLabel != null  and headerLabel != ''"> and header_label = #{headerLabel}</if>
+            <if test="headerValue != null  and headerValue != ''"> and header_value = #{headerValue}</if>
+            <if test="cardType != null  and cardType != ''"> and card_type = #{cardType}</if>
+            <if test="cssClass != null  and cssClass != ''"> and css_class = #{cssClass}</if>
+            <if test="listClass != null  and listClass != ''"> and list_class = #{listClass}</if>
+            <if test="isDefault != null  and isDefault != ''"> and is_default = #{isDefault}</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+        </where>
+    </select>
+    
+    <select id="selectCardTableHeaderByHeaderCode" parameterType="Long" resultMap="CardTableHeaderResult">
+        <include refid="selectCardTableHeaderVo"/>
+        where header_code = #{headerCode}
+    </select>
+        
+    <insert id="insertCardTableHeader" parameterType="CardTableHeader" useGeneratedKeys="true" keyProperty="headerCode">
+        insert into card_table_header
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="parentCode != null">parent_code,</if>
+            <if test="headerSort != null">header_sort,</if>
+            <if test="headerLabel != null">header_label,</if>
+            <if test="headerValue != null">header_value,</if>
+            <if test="cardType != null">card_type,</if>
+            <if test="cssClass != null">css_class,</if>
+            <if test="listClass != null">list_class,</if>
+            <if test="isDefault != null">is_default,</if>
+            <if test="status != null">status,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="remark != null">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="parentCode != null">#{parentCode},</if>
+            <if test="headerSort != null">#{headerSort},</if>
+            <if test="headerLabel != null">#{headerLabel},</if>
+            <if test="headerValue != null">#{headerValue},</if>
+            <if test="cardType != null">#{cardType},</if>
+            <if test="cssClass != null">#{cssClass},</if>
+            <if test="listClass != null">#{listClass},</if>
+            <if test="isDefault != null">#{isDefault},</if>
+            <if test="status != null">#{status},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="remark != null">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCardTableHeader" parameterType="CardTableHeader">
+        update card_table_header
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="parentCode != null">parent_code = #{parentCode},</if>
+            <if test="headerSort != null">header_sort = #{headerSort},</if>
+            <if test="headerLabel != null">header_label = #{headerLabel},</if>
+            <if test="headerValue != null">header_value = #{headerValue},</if>
+            <if test="cardType != null">card_type = #{cardType},</if>
+            <if test="cssClass != null">css_class = #{cssClass},</if>
+            <if test="listClass != null">list_class = #{listClass},</if>
+            <if test="isDefault != null">is_default = #{isDefault},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </trim>
+        where header_code = #{headerCode}
+    </update>
+
+    <delete id="deleteCardTableHeaderByHeaderCode" parameterType="Long">
+        delete from card_table_header where header_code = #{headerCode}
+    </delete>
+
+    <delete id="deleteCardTableHeaderByHeaderCodes" parameterType="String">
+        delete from card_table_header where header_code in 
+        <foreach item="headerCode" collection="array" open="(" separator="," close=")">
+            #{headerCode}
+        </foreach>
+    </delete>
+</mapper>

@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.trial.mapper.ActionLogMapper">
+    <resultMap type="com.ruoyi.common.entity.ActionLog" id="ActionLogMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="taskId" column="task_id" jdbcType="INTEGER"/>
+        <result property="actionType" column="action_type" jdbcType="INTEGER"/>
+        <result property="createBy" column="create_by" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="VARCHAR"/>
+        <result property="otherInfo01" column="other_info_01" jdbcType="VARCHAR"/>
+        <result property="otherInfo02" column="other_info_02" jdbcType="VARCHAR"/>
+        <result property="otherInfo03" column="other_info_03" jdbcType="VARCHAR"/>
+        <result property="otherInfo04" column="other_info_04" jdbcType="VARCHAR"/>
+        <result property="otherInfo05" column="other_info_05" jdbcType="VARCHAR"/>
+        <result property="otherInfo06" column="other_info_06" jdbcType="VARCHAR"/>
+        <result property="otherInfo07" column="other_info_07" jdbcType="VARCHAR"/>
+        <result property="userName" column="user_name"></result>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="ActionLogMap">
+        select id,
+               task_id,
+               action_type,
+               create_by,
+               create_time,
+               other_info_01,
+               other_info_02,
+               other_info_03,
+               other_info_04,
+               other_info_05,
+               other_info_06,
+               other_info_07
+        from action_log
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="ActionLogMap">
+        select id,
+               task_id,
+               action_type,
+               create_by,
+               create_time,
+               other_info_01,
+               other_info_02,
+               other_info_03,
+               other_info_04,
+               other_info_05,
+               other_info_06,
+               other_info_07
+        from action_log
+        limit #{offset}, #{limit}
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryAll" resultMap="ActionLogMap">
+        select al.id,
+               al.task_id,
+               al.action_type,
+               al.create_by,
+               al.create_time,
+               al.other_info_01,
+               al.other_info_02,
+               al.other_info_03,
+               al.other_info_04,
+               al.other_info_05,
+               al.other_info_06,
+               al.other_info_07,
+               su.user_name
+        from action_log as al
+                 left join sys_user as su on su.user_id = al.create_by
+        <where>
+            <if test="id != null">
+                and al.id = #{id}
+            </if>
+            <if test="taskId != null">
+                and al.task_id = #{taskId}
+            </if>
+            <if test="actionType != null">
+                and al.action_type = #{actionType}
+            </if>
+            <if test="createBy != null and createBy != ''">
+                and al.create_by = #{createBy}
+            </if>
+            <if test="createTime != null and createTime != ''">
+                and al.create_time = #{createTime}
+            </if>
+            <if test="otherInfo01 != null and otherInfo01 != ''">
+                and al.other_info_01 = #{otherInfo01}
+            </if>
+            <if test="otherInfo02 != null and otherInfo02 != ''">
+                and al.other_info_02 = #{otherInfo02}
+            </if>
+            <if test="otherInfo03 != null and otherInfo03 != ''">
+                and al.other_info_03 = #{otherInfo03}
+            </if>
+            <if test="otherInfo04 != null and otherInfo04 != ''">
+                and al.other_info_04 = #{otherInfo04}
+            </if>
+            <if test="otherInfo05 != null and otherInfo05 != ''">
+                and al.other_info_05 = #{otherInfo05}
+            </if>
+            <if test="otherInfo06 != null and otherInfo06 != ''">
+                and al.other_info_06 = #{otherInfo06}
+            </if>
+            <if test="otherInfo07 != null and otherInfo07 != ''">
+                and al.other_info_07 = #{otherInfo07}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into action_log(task_id, action_type, create_by, create_time, other_info_01, other_info_02,
+                               other_info_03, other_info_04, other_info_05, other_info_06, other_info_07)
+        values (#{taskId}, #{actionType}, #{createBy}, #{createTime}, #{otherInfo01}, #{otherInfo02}, #{otherInfo03},
+                #{otherInfo04}, #{otherInfo05}, #{otherInfo06}, #{otherInfo07})
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update action_log
+        <set>
+            <if test="taskId != null">
+                task_id = #{taskId},
+            </if>
+            <if test="actionType != null">
+                action_type = #{actionType},
+            </if>
+            <if test="createBy != null and createBy != ''">
+                create_by = #{createBy},
+            </if>
+            <if test="createTime != null and createTime != ''">
+                create_time = #{createTime},
+            </if>
+            <if test="otherInfo01 != null and otherInfo01 != ''">
+                other_info_01 = #{otherInfo01},
+            </if>
+            <if test="otherInfo02 != null and otherInfo02 != ''">
+                other_info_02 = #{otherInfo02},
+            </if>
+            <if test="otherInfo03 != null and otherInfo03 != ''">
+                other_info_03 = #{otherInfo03},
+            </if>
+            <if test="otherInfo04 != null and otherInfo04 != ''">
+                other_info_04 = #{otherInfo04},
+            </if>
+            <if test="otherInfo05 != null and otherInfo05 != ''">
+                other_info_05 = #{otherInfo05},
+            </if>
+            <if test="otherInfo06 != null and otherInfo06 != ''">
+                other_info_06 = #{otherInfo06},
+            </if>
+            <if test="otherInfo07 != null and otherInfo07 != ''">
+                other_info_07 = #{otherInfo07},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete
+        from action_log
+        where id = #{id}
+    </delete>
+</mapper>

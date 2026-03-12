@@ -1,0 +1,393 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.21.5.final using JasperReports Library version 6.21.5-74d586df47b25dbd05bd0957999819196e59934a  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="prod" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="11f6cf2a-1d47-429f-90a8-11b87e2f72f1">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="trial_dev"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<queryString>
+		<![CDATA[ select program,
+ name,
+ figure,
+ trial_quantity,
+ inspection_quantity,
+ manufacturing_quality_status,
+ manufacturing_area,
+ director,director_tel,
+process_quality_status,
+me_director,
+me_director_tel,
+notes 
+from trial_task_detail_prod]]>
+	</queryString>
+	<field name="program" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="program"/>
+		<property name="com.jaspersoft.studio.field.label" value="program"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="trial_task_detail_prod"/>
+		<fieldDescription><![CDATA[流转程序]]></fieldDescription>
+	</field>
+	<field name="name" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="name"/>
+		<property name="com.jaspersoft.studio.field.label" value="name"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="trial_task_detail_prod"/>
+		<fieldDescription><![CDATA[名称]]></fieldDescription>
+	</field>
+	<field name="figure" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="figure"/>
+		<property name="com.jaspersoft.studio.field.label" value="figure"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="trial_task_detail_prod"/>
+		<fieldDescription><![CDATA[图号]]></fieldDescription>
+	</field>
+	<field name="trial_quantity" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="trial_quantity"/>
+		<property name="com.jaspersoft.studio.field.label" value="trial_quantity"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="trial_task_detail_prod"/>
+		<fieldDescription><![CDATA[试制数量]]></fieldDescription>
+	</field>
+	<field name="inspection_quantity" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="inspection_quantity"/>
+		<property name="com.jaspersoft.studio.field.label" value="inspection_quantity"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="trial_task_detail_prod"/>
+		<fieldDescription><![CDATA[送检数量]]></fieldDescription>
+	</field>
+	<field name="manufacturing_quality_status" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="manufacturing_quality_status"/>
+		<property name="com.jaspersoft.studio.field.label" value="manufacturing_quality_status"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="trial_task_detail_prod"/>
+		<fieldDescription><![CDATA[质量状态]]></fieldDescription>
+	</field>
+	<field name="manufacturing_area" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="manufacturing_area"/>
+		<property name="com.jaspersoft.studio.field.label" value="manufacturing_area"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="trial_task_detail_prod"/>
+		<fieldDescription><![CDATA[制造区域]]></fieldDescription>
+	</field>
+	<field name="director" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="director"/>
+		<property name="com.jaspersoft.studio.field.label" value="director"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="trial_task_detail_prod"/>
+		<fieldDescription><![CDATA[负责人]]></fieldDescription>
+	</field>
+	<field name="director_tel" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="director_tel"/>
+		<property name="com.jaspersoft.studio.field.label" value="director_tel"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="trial_task_detail_prod"/>
+		<fieldDescription><![CDATA[电话]]></fieldDescription>
+	</field>
+	<field name="process_quality_status" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="process_quality_status"/>
+		<property name="com.jaspersoft.studio.field.label" value="process_quality_status"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="trial_task_detail_prod"/>
+		<fieldDescription><![CDATA[质量状态]]></fieldDescription>
+	</field>
+	<field name="me_director" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="me_director"/>
+		<property name="com.jaspersoft.studio.field.label" value="me_director"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="trial_task_detail_prod"/>
+		<fieldDescription><![CDATA[责任ME]]></fieldDescription>
+	</field>
+	<field name="me_director_tel" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="me_director_tel"/>
+		<property name="com.jaspersoft.studio.field.label" value="me_director_tel"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="trial_task_detail_prod"/>
+		<fieldDescription><![CDATA[联系电话]]></fieldDescription>
+	</field>
+	<field name="notes" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="notes"/>
+		<property name="com.jaspersoft.studio.field.label" value="notes"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="trial_task_detail_prod"/>
+		<fieldDescription><![CDATA[备注]]></fieldDescription>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="40" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<staticText>
+				<reportElement x="230" y="0" width="300" height="40" uuid="eb4db28d-3a59-41e2-92a9-86844bfdd688"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="黑体" size="22"/>
+				</textElement>
+				<text><![CDATA[新产品质量信息流转卡]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="30" splitType="Stretch">
+			<staticText>
+				<reportElement x="-20" y="0" width="40" height="30" uuid="61445415-714e-4ca4-9666-6ace2c648a3f"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="黑体" size="15"/>
+				</textElement>
+				<text><![CDATA[车型]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="80" y="0" width="70" height="30" uuid="7836c88d-3b77-42cd-8b15-07ca10013b9f"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="黑体" size="15"/>
+				</textElement>
+				<text><![CDATA[总成名称]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="200" y="0" width="70" height="30" uuid="91133674-169f-4157-b849-bd350c260e17"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="黑体" size="15"/>
+				</textElement>
+				<text><![CDATA[总成图号]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="330" y="0" width="50" height="30" uuid="ed9b8f60-c49f-45dc-86c9-f3ead472c726"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="黑体" size="15"/>
+				</textElement>
+				<text><![CDATA[管理员]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="480" y="0" width="50" height="30" uuid="9922a6d1-f0ce-4939-9ec5-c4595058202e"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="黑体" size="15"/>
+				</textElement>
+				<text><![CDATA[PE]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="60" splitType="Stretch">
+			<staticText>
+				<reportElement x="80" y="0" width="70" height="60" uuid="43dde072-49bb-45f3-9a99-94f0549b6119">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="84cd2718-cc1c-4441-8b50-bf89dc8a1f5f"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="黑体" size="15"/>
+				</textElement>
+				<text><![CDATA[名称]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="20" y="0" width="60" height="60" uuid="f7645601-c17d-4cdf-addf-4d5cb8b42c4d">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="6af2df23-6420-4176-8600-adb0f0570a0e"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="黑体" size="15"/>
+				</textElement>
+				<text><![CDATA[流转程序]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="150" y="0" width="50" height="60" uuid="dc9718b0-f37f-4b2c-881e-86c8ef68304d">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="2ea6ab05-6a07-4193-844a-fff1e4126cda"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="黑体" size="15"/>
+				</textElement>
+				<text><![CDATA[图号]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="200" y="0" width="70" height="60" uuid="d03c706e-e8f0-4484-9b11-ed2219b94c5c">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="b652c0de-2711-42f6-a590-3d7c67bbd236"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="黑体" size="15"/>
+				</textElement>
+				<text><![CDATA[试制数量]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="270" y="0" width="60" height="60" uuid="c357e0a6-7664-40f5-9c00-bff9b7409917">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="a0647425-7364-4c72-8e48-e19747828614"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="黑体" size="15"/>
+				</textElement>
+				<text><![CDATA[送检数量]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="330" y="0" width="230" height="30" uuid="5b58e9fb-8d58-4799-a23f-3b40644b3ec0"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="黑体" size="15"/>
+				</textElement>
+				<text><![CDATA[制造质量确认]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="330" y="30" width="60" height="30" uuid="6aef03b2-721d-44fe-8107-e437ff6f4977">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="0b806bde-7bd9-4076-8173-96854df67066"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="黑体" size="15"/>
+				</textElement>
+				<text><![CDATA[质量状态]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="390" y="30" width="60" height="30" uuid="c8d41bbf-59b5-4568-86a3-b3cc8a211292">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="f3664a18-29ab-4ace-914b-58caa182254c"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="黑体" size="15"/>
+				</textElement>
+				<text><![CDATA[制造区域]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="450" y="30" width="50" height="30" uuid="2ee2bca0-1530-4e18-bfad-47ed0ca99b99">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="cc8b3383-226a-4541-900a-36eed2e8b096"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="黑体" size="15"/>
+				</textElement>
+				<text><![CDATA[负责人]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="500" y="30" width="60" height="30" uuid="c8ae3521-85cb-44ec-88b3-6325c4cca710">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="a84207eb-f6f4-47c8-990f-98bcce735573"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="黑体" size="15"/>
+				</textElement>
+				<text><![CDATA[联系电话]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="560" y="0" width="170" height="30" uuid="62101b26-7832-4baa-97db-d5c22068fe7f">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="黑体" size="15"/>
+				</textElement>
+				<text><![CDATA[工艺质量确认]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="620" y="30" width="50" height="30" uuid="77c34f39-9f5d-458e-aa55-d61936f2834d">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="7091b3e0-721b-4527-91dd-5b5ffd8eb0ad"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="黑体" size="15"/>
+				</textElement>
+				<text><![CDATA[责任ME]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="670" y="30" width="60" height="30" uuid="bd2272d9-f647-4b5a-b82a-8c1a1d7f8f4c">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="c3fb254d-2f4e-4b9d-ba41-e9dd40c55a54"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="黑体" size="15"/>
+				</textElement>
+				<text><![CDATA[联系电话]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="730" y="0" width="90" height="60" uuid="e971c362-1b8d-49ba-8eb2-d9c885244efc">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="112ee2e6-80c5-405a-a930-9af597af0d46"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="黑体" size="15"/>
+				</textElement>
+				<text><![CDATA[备注]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="560" y="30" width="60" height="30" uuid="832d82a2-59a5-4ca3-9719-a1c04a1fca6c">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="0b806bde-7bd9-4076-8173-96854df67066"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="黑体" size="15"/>
+				</textElement>
+				<text><![CDATA[质量状态]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="30" splitType="Stretch">
+			<textField>
+				<reportElement x="80" y="0" width="70" height="30" uuid="d78e0b24-6458-463c-8430-133f7f58c0a2">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="84cd2718-cc1c-4441-8b50-bf89dc8a1f5f"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{name}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="20" y="0" width="60" height="30" uuid="ce408518-5884-4145-a103-8110952a5bc4">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="6af2df23-6420-4176-8600-adb0f0570a0e"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{program}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="150" y="0" width="50" height="30" uuid="346abdeb-e9ae-4b07-9111-b7c76c2dbff2">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="2ea6ab05-6a07-4193-844a-fff1e4126cda"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{figure}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="200" y="0" width="70" height="30" uuid="84642ad7-8381-4490-a52e-8e3a7a832d70">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="b652c0de-2711-42f6-a590-3d7c67bbd236"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{trial_quantity}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="270" y="0" width="60" height="30" uuid="2605eeb9-8d3e-49a8-8184-fb3a409b9a6a">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="a0647425-7364-4c72-8e48-e19747828614"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{inspection_quantity}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="330" y="0" width="60" height="30" uuid="ad8e21db-100a-4be4-b4de-db5d0792f995">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="0b806bde-7bd9-4076-8173-96854df67066"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{manufacturing_quality_status}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="390" y="0" width="59" height="30" uuid="fd75c0db-2cde-4599-a136-8bad1f631858">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="f3664a18-29ab-4ace-914b-58caa182254c"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{manufacturing_area}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="450" y="0" width="50" height="30" uuid="3e60fcc9-f888-4953-9460-bd7a4b0c7672">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="cc8b3383-226a-4541-900a-36eed2e8b096"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{director}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="500" y="0" width="59" height="30" uuid="d39bfe85-1660-4156-958e-806510e22464">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="a84207eb-f6f4-47c8-990f-98bcce735573"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{director_tel}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="560" y="0" width="60" height="30" uuid="97a944c0-1ac2-4118-947a-b84f7033861e">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="de5f5fa3-e124-45ca-836b-23982a9ad270"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{process_quality_status}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="620" y="0" width="50" height="30" uuid="c1eeca17-df71-4fec-afb2-9c0f852fecfe">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="7091b3e0-721b-4527-91dd-5b5ffd8eb0ad"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{me_director}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="670" y="0" width="60" height="30" uuid="627d6e98-7f78-4d0a-8bc1-9224d8d0c456">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="c3fb254d-2f4e-4b9d-ba41-e9dd40c55a54"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{me_director_tel}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="730" y="0" width="90" height="30" uuid="a56bf263-4e04-4724-b4a7-b256736b85d3">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="112ee2e6-80c5-405a-a930-9af597af0d46"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{notes}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="30" splitType="Stretch">
+			<staticText>
+				<reportElement x="-20" y="0" width="840" height="30" uuid="d5eb7e19-d864-4e7a-a40a-bd1349e77f1f"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="黑体" size="15"/>
+				</textElement>
+				<text><![CDATA[ 说明：纸质二维码跟货走，过程有零部件分流时必须重新生成打印二维码附带在原剩余物料上。]]></text>
+			</staticText>
+		</band>
+	</columnFooter>
+</jasperReport>

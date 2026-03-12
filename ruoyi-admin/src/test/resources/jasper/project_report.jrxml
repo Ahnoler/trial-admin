@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.21.5.final using JasperReports Library version 6.21.5-74d586df47b25dbd05bd0957999819196e59934a  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ProjectReport" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="7fac59b7-29aa-4aa7-ac1c-7d2d07d625e5">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+	<parameter name="projectName" class="java.lang.String"/>
+	<parameter name="assemblyName" class="java.lang.String"/>
+	<parameter name="projectLeader" class="java.lang.String"/>
+	<parameter name="projectStatus" class="java.lang.String"/>
+	<title>
+		<band height="60">
+			<staticText>
+				<reportElement x="0" y="10" width="555" height="40" uuid="e65f9f84-1be2-4944-b78e-a7c4eb55d48b"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="黑体" size="18" isBold="true"/>
+				</textElement>
+				<text><![CDATA[项目基本信息报表]]></text>
+			</staticText>
+		</band>
+	</title>
+	<detail>
+		<band height="200">
+			<staticText>
+				<reportElement x="20" y="10" width="120" height="30" uuid="d378e8bb-d296-4e26-8a57-9172340980f1"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="黑体" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[项目名称：]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="140" y="10" width="400" height="30" uuid="4850cb95-487b-497c-a4a4-bf0366a632b7"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="宋体" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{projectName}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="20" y="50" width="120" height="30" uuid="2fab18fc-f5c3-4fc7-a669-3f5d5b777102"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="黑体" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[总成名称：]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="140" y="50" width="400" height="30" uuid="f7ea542c-b583-4e9c-a7d9-3402ff65d6e0"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="宋体" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{assemblyName}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="20" y="90" width="120" height="30" uuid="64de7724-1b72-4638-8af2-058d74fd9a9f"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="黑体" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[项目负责人：]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="140" y="90" width="400" height="30" uuid="26ca04fd-e28d-4968-b94d-1dcb79b3572f"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="宋体" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{projectLeader}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="20" y="130" width="120" height="30" uuid="4e5169e6-d175-4771-aa2e-e9181178020e"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="黑体" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[项目状态：]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="140" y="130" width="400" height="30" uuid="3a8a14ab-8653-40c4-a6a1-71b40aed7869"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="宋体" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{projectStatus}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

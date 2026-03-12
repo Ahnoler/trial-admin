@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.trial.mapper.HomePageMapper">
+
+    <resultMap id="prjectVO" type="com.ruoyi.trial.domain.VO.ProjectVO">
+        <result property="total" column="total" jdbcType="INTEGER"/>
+        <result property="taskTotal" column="task_total" jdbcType="INTEGER"/>
+        <result property="taskBegin" column="task_begin" jdbcType="INTEGER"/>
+        <result property="taskEnd" column="task_end" jdbcType="INTEGER"/>
+        <result property="cardBegin" column="card_begin" jdbcType="INTEGER"/>
+        <result property="cardEnd" column="card_end" jdbcType="INTEGER"/>
+        <result property="taskChangeBegin" column="task_change_begin" jdbcType="INTEGER"/>
+        <result property="taskChangeEnd" column="task_change_end" jdbcType="INTEGER"/>
+        <result property="taskShuntBegin" column="task_shunt_begin" jdbcType="INTEGER"/>
+        <result property="taskShuntEnd" column="task_shunt_end" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <resultMap id="TrialCardVO" type="com.ruoyi.trial.domain.VO.TrialCardVO">
+        <result property="total" column="total" jdbcType="INTEGER"/>
+        <result property="jan" column="jan" jdbcType="INTEGER"/>
+        <result property="feb" column="feb" jdbcType="INTEGER"/>
+        <result property="mar" column="mar" jdbcType="INTEGER"/>
+        <result property="apr" column="apr" jdbcType="INTEGER"/>
+        <result property="may" column="may" jdbcType="INTEGER"/>
+        <result property="jun" column="jun" jdbcType="INTEGER"/>
+        <result property="jul" column="jul" jdbcType="INTEGER"/>
+        <result property="aug" column="aug" jdbcType="INTEGER"/>
+        <result property="sept" column="sept" jdbcType="INTEGER"/>
+        <result property="oct" column="oct" jdbcType="INTEGER"/>
+        <result property="nov" column="nov" jdbcType="INTEGER"/>
+        <result property="december" column="december" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <resultMap id="TrialTaskVO" type="com.ruoyi.trial.domain.VO.TrialTaskVO">
+        <result property="taskId" column="task_id"/>
+        <result property="projectId" column="project_id"/>
+        <result property="projectName" column="project_name"/>
+        <result property="cardType" column="card_type"/>
+        <result property="title" column="title"/>
+        <result property="carType" column="car_type"/>
+        <result property="assemblyName" column="assembly_name"/>
+        <result property="assemblyFigure" column="assembly_figure"/>
+        <result property="pm" column="pm"/>
+        <result property="pe" column="pe"/>
+        <result property="currentSerialNo" column="current_serial_no"/>
+        <result property="currentSerialName" column="current_serial_name"/>
+        <result property="status" column="status"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="remark" column="remark"/>
+        <collection property="list" javaType="java.util.List" resultMap="TrialTaskDetailProdResult"/>
+    </resultMap>
+
+
+    <resultMap type="TrialTaskDetailProd" id="TrialTaskDetailProdResult">
+        <result property="id" column="id"/>
+        <result property="taskId" column="task_id"/>
+        <result property="cardType" column="card_type"/>
+        <result property="columnCode" column="column_code"/>
+        <result property="serialNo" column="serial_no"/>
+        <result property="program" column="program"/>
+        <result property="name" column="name"/>
+        <result property="figure" column="figure"/>
+        <result property="trialQuantity" column="trial_quantity"/>
+        <result property="inspectionQuantity" column="inspection_quantity"/>
+        <result property="manufacturingQualityStatus" column="manufacturing_quality_status"/>
+        <result property="manufacturingArea" column="manufacturing_area"/>
+        <result property="director" column="director"/>
+        <result property="directorTel" column="director_tel"/>
+        <result property="processQualityStatus" column="process_quality_status"/>
+        <result property="meDirector" column="me_director"/>
+        <result property="meDirectorTel" column="me_director_tel"/>
+        <result property="notes" column="notes"/>
+        <result property="status" column="status"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="remark" column="remark"/>
+    </resultMap>
+
+    <!--    查询项目总量-->
+    <select id="selectProjectCount" resultType="java.lang.Integer">
+        select count(1) as total
+        from projects p
+        <where>
+            <if test="year != null and year != ''">
+                and DATE_FORMAT(p.create_time,'%Y') = #{year}
+            </if>
+            <if test="month != null and month != ''">
+                and DATE_FORMAT(create_time,'%m') = #{month}
+            </if>
+        </where>
+    </select>
+    <!--    查询项目各月新建-->
+    <select id="selectProjectMonth" resultMap="TrialCardVO">
+        select IFNULL(sum(case DATE_FORMAT(p.create_time,"%m") WHEN '01' THEN 1 else 0 end ),0) as jan,
+        IFNULL(sum(case DATE_FORMAT(p.create_time,"%m") WHEN '02' THEN 1 else 0 end ),0) as feb,
+        IFNULL(sum(case DATE_FORMAT(p.create_time,"%m") WHEN '03' THEN 1 else 0 end ),0) as mar,
+        IFNULL(sum(case DATE_FORMAT(p.create_time,"%m") WHEN '04' THEN 1 else 0 end ),0) as apr,
+        IFNULL(sum(case DATE_FORMAT(p.create_time,"%m") WHEN '05' THEN 1 else 0 end ),0) as may,
+        IFNULL(sum(case DATE_FORMAT(p.create_time,"%m") WHEN '06' THEN 1 else 0 end ),0) as jun,
+        IFNULL(sum(case DATE_FORMAT(p.create_time,"%m") WHEN '07' THEN 1 else 0 end ),0) as jul,
+        IFNULL(sum(case DATE_FORMAT(p.create_time,"%m") WHEN '08' THEN 1 else 0 end ),0) as aug,
+        IFNULL(sum(case DATE_FORMAT(p.create_time,"%m") WHEN '09' THEN 1 else 0 end ),0) as sept,
+        IFNULL(sum(case DATE_FORMAT(p.create_time,"%m") WHEN '10' THEN 1 else 0 end ),0) as oct,
+        IFNULL(sum(case DATE_FORMAT(p.create_time,"%m") WHEN '11' THEN 1 else 0 end ),0) as nov,
+        IFNULL(sum(case DATE_FORMAT(p.create_time,"%m") WHEN '12' THEN 1 else 0 end ),0) as december
+        from projects p
+        <where>
+            <if test="year != null and year != ''">
+                and DATE_FORMAT(p.create_time,'%Y') = #{year}
+            </if>
+            <if test="month != null and month != ''">
+                and DATE_FORMAT(p.create_time,'%m') = #{month}
+            </if>
+        </where>
+    </select>
+    <!-- 查询任务启动/结束   -->
+    <select id="selectTaskBeginAndEnd" resultMap="prjectVO">
+        SELECT
+        count(1) as task_total,
+        IFNULL(sum(case tp.`status` WHEN 0 THEN 1 else 0 end ),0) as task_begin,
+        IFNULL(sum(case tp.`status` WHEN 2 THEN 1 else 0 end ),0) as task_end
+        FROM trial_task_prod tp
+        <where>
+            <if test="year != null and year != ''">
+                and DATE_FORMAT(tp.create_time,'%Y') = #{year}
+            </if>
+            <if test="month != null and month != ''">
+                and DATE_FORMAT(tp.create_time,'%m') = #{month}
+            </if>
+        </where>
+    </select>
+
+    <!-- 查询卡片填写   -->
+    <select id="selectCradFillBeginAndEnd" resultMap="prjectVO">
+        select count(1) as total,
+        IFNULL(sum(case td.`status` WHEN 2 THEN 1 else 0 end ),0) as card_begin,
+        IFNULL(sum(case td.`status` WHEN 3 THEN 1 else 0 end ),0) as card_end
+        from trial_task_detail_prod td
+        <where>
+            <if test="year != null and year != ''">
+                and DATE_FORMAT(td.create_time,'%Y') = #{year}
+            </if>
+            <if test="month != null and month != ''">
+                and DATE_FORMAT(td.create_time,'%m') = #{month}
+            </if>
+        </where>
+    </select>
+
+
+    <!-- 查询程序变更和零件分流   -->
+    <select id="selectChangeAndShunt" resultMap="prjectVO">
+        SELECT
+        IFNULL(sum(case WHEN tp.`status`= 0 and al.action_type = 2 THEN 1 else 0 end ),0) as task_change_begin,
+        IFNULL(sum(case WHEN tp.`status`= 2 and al.action_type = 2 THEN 1 else 0 end ),0) as task_change_end,
+        IFNULL(sum(case WHEN tp.`status`= 0 and al.action_type = 1 THEN 1 else 0 end ),0) as task_shunt_begin,
+        IFNULL(sum(case WHEN tp.`status`= 2 and al.action_type = 1 THEN 1 else 0 end ),0) as task_shunt_end
+        from action_log al
+        left join trial_task_prod tp on tp.task_id = al.task_id
+        <where>
+            <if test="year != null and year != ''">
+                and DATE_FORMAT(al.create_time,'%Y') = #{year}
+            </if>
+            <if test="month != null and month != ''">
+                and DATE_FORMAT(al.create_time,'%m') = #{month}
+            </if>
+        </where>
+    </select>
+
+
+    <!-- 查询零件每月数量   -->
+    <select id="selectTaskDetailMonth" resultMap="TrialCardVO">
+        select sum(td.trial_quantity) as total,
+        IFNULL(sum(case DATE_FORMAT(td.create_time,"%m") WHEN '01' THEN td.trial_quantity else 0 end ),0) as jan,
+        IFNULL(sum(case DATE_FORMAT(td.create_time,"%m") WHEN '02' THEN td.trial_quantity else 0 end ),0) as feb,
+        IFNULL(sum(case DATE_FORMAT(td.create_time,"%m") WHEN '03' THEN td.trial_quantity else 0 end ),0) as mar,
+        IFNULL(sum(case DATE_FORMAT(td.create_time,"%m") WHEN '04' THEN td.trial_quantity else 0 end ),0) as apr,
+        IFNULL(sum(case DATE_FORMAT(td.create_time,"%m") WHEN '05' THEN td.trial_quantity else 0 end ),0) as may,
+        IFNULL(sum(case DATE_FORMAT(td.create_time,"%m") WHEN '06' THEN td.trial_quantity else 0 end ),0) as jun,
+        IFNULL(sum(case DATE_FORMAT(td.create_time,"%m") WHEN '07' THEN td.trial_quantity else 0 end ),0) as jul,
+        IFNULL(sum(case DATE_FORMAT(td.create_time,"%m") WHEN '08' THEN td.trial_quantity else 0 end ),0) as aug,
+        IFNULL(sum(case DATE_FORMAT(td.create_time,"%m") WHEN '09' THEN td.trial_quantity else 0 end ),0) as sept,
+        IFNULL(sum(case DATE_FORMAT(td.create_time,"%m") WHEN '10' THEN td.trial_quantity else 0 end ),0) as oct,
+        IFNULL(sum(case DATE_FORMAT(td.create_time,"%m") WHEN '11' THEN td.trial_quantity else 0 end ),0) as nov,
+        IFNULL(sum(case DATE_FORMAT(td.create_time,"%m") WHEN '12' THEN td.trial_quantity else 0 end ),0) as december
+        from trial_task_detail_prod td
+        <where>
+            <if test="year != null and year != ''">
+                and DATE_FORMAT(td.create_time,'%Y') = #{year}
+            </if>
+            <if test="month != null and month != ''">
+                and DATE_FORMAT(td.create_time,'%m') = #{month}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectExamineTask" resultMap="TrialTaskVO">
+
+        SELECT
+            tp.task_id,
+            tp.project_id,
+            tp.project_name,
+            tp.card_type,
+            tp.title,
+            tp.car_type,
+            tp.assembly_name,
+            tp.assembly_figure,
+            tp.pm,
+            tp.pe,
+            tp.current_serial_no,
+            tp.current_serial_name,
+            tp.status,
+            tp.create_by,
+            tp.create_time,
+            tp.update_by,
+            tp.update_time,
+            tp.remark,
+            td.id,
+            td.task_id,
+            td.card_type,
+            td.column_code,
+            td.serial_no,
+            td.program,
+            td.name,
+            td.figure,
+            td.trial_quantity,
+            td.inspection_quantity,
+            td.manufacturing_quality_status,
+            td.manufacturing_area,
+            td.director,
+            td.director_tel,
+            td.process_quality_status,
+            td.me_director,
+            td.me_director_tel,
+            td.notes,
+            td.STATUS,
+            td.create_by,
+            td.create_time,
+            td.update_by,
+            td.update_time,
+            td.remark
+        FROM
+            trial_task_prod tp
+                left join trial_task_detail_prod td on tp.task_id = td.task_id
+        <where>
+            and td.status = 2
+            <if test="year != null and year != ''">
+                and DATE_FORMAT(td.create_time,'%Y') = #{year}
+            </if>
+            <if test="month != null and month != ''">
+                and DATE_FORMAT(td.create_time,'%m') = #{month}
+            </if>
+        </where>
+    </select>
+</mapper>

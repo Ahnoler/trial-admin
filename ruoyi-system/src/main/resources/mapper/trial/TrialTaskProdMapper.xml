@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.trial.mapper.TrialTaskProdMapper">
+
+    <resultMap type="TrialTaskProd" id="TrialTaskProdResult">
+        <result property="taskId" column="task_id"/>
+        <result property="projectId" column="project_id"/>
+        <result property="projectName" column="project_name"/>
+        <result property="cardType" column="card_type"/>
+        <result property="title" column="title"/>
+        <result property="carType" column="car_type"/>
+        <result property="assemblyName" column="assembly_name"/>
+        <result property="assemblyFigure" column="assembly_figure"/>
+        <result property="pm" column="pm"/>
+        <result property="pe" column="pe"/>
+        <result property="currentSerialNo" column="current_serial_no"/>
+        <result property="currentSerialName" column="current_serial_name"/>
+        <result property="status" column="status"/>
+        <result property="relatedTaskId" column="related_task_id"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="remark" column="remark"/>
+    </resultMap>
+
+    <sql id="selectTrialTaskProdVo">
+        select task_id,
+               project_id,
+               project_name,
+               card_type,
+               title,
+               car_type,
+               assembly_name,
+               assembly_figure,
+               pm,
+               pe,
+               current_serial_no,
+               current_serial_name,
+               status,
+               related_task_id,
+               create_by,
+               create_time,
+               update_by,
+               update_time,
+               remark
+        from trial_task_prod
+    </sql>
+
+    <select id="selectTrialTaskProdList" parameterType="TrialTaskProd" resultMap="TrialTaskProdResult">
+        <include refid="selectTrialTaskProdVo"/>
+        <where>
+            <if test="projectId != null ">and project_id = #{projectId}</if>
+            <if test="projectName != null  and projectName != ''">and project_name like concat('%', #{projectName},
+                '%')
+            </if>
+            <if test="cardType != null  and cardType != ''">and card_type = #{cardType}</if>
+            <if test="title != null  and title != ''">and title = #{title}</if>
+            <if test="carType != null  and carType != ''">and car_type = #{carType}</if>
+            <if test="assemblyName != null  and assemblyName != ''">and assembly_name like concat('%', #{assemblyName},
+                '%')
+            </if>
+            <if test="assemblyFigure != null  and assemblyFigure != ''">and assembly_figure = #{assemblyFigure}</if>
+            <if test="pm != null  and pm != ''">and pm = #{pm}</if>
+            <if test="pe != null  and pe != ''">and pe = #{pe}</if>
+            <if test="currentSerialNo != null ">and current_serial_no = #{currentSerialNo}</if>
+            <if test="currentSerialName != null  and currentSerialName != ''">and current_serial_name like concat('%',
+                #{currentSerialName}, '%')
+            </if>
+            <if test="status != null  and status != ''">and status = #{status}</if>
+        </where>
+    </select>
+
+    <select id="selectTrialTaskProdByTaskId" parameterType="Long" resultMap="TrialTaskProdResult">
+        <include refid="selectTrialTaskProdVo"/>
+        where task_id = #{taskId}
+    </select>
+
+    <insert id="insertTrialTaskProd" parameterType="TrialTaskProd" useGeneratedKeys="true" keyProperty="taskId">
+        insert into trial_task_prod
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="projectId != null">project_id,</if>
+            <if test="projectName != null">project_name,</if>
+            <if test="cardType != null">card_type,</if>
+            <if test="title != null">title,</if>
+            <if test="carType != null">car_type,</if>
+            <if test="assemblyName != null">assembly_name,</if>
+            <if test="assemblyFigure != null">assembly_figure,</if>
+            <if test="pm != null">pm,</if>
+            <if test="pe != null">pe,</if>
+            <if test="currentSerialNo != null">current_serial_no,</if>
+            <if test="currentSerialName != null">current_serial_name,</if>
+            <if test="status != null">status,</if>
+            <if test="relatedTaskId != null">related_task_id,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="remark != null">remark,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="projectId != null">#{projectId},</if>
+            <if test="projectName != null">#{projectName},</if>
+            <if test="cardType != null">#{cardType},</if>
+            <if test="title != null">#{title},</if>
+            <if test="carType != null">#{carType},</if>
+            <if test="assemblyName != null">#{assemblyName},</if>
+            <if test="assemblyFigure != null">#{assemblyFigure},</if>
+            <if test="pm != null">#{pm},</if>
+            <if test="pe != null">#{pe},</if>
+            <if test="currentSerialNo != null">#{currentSerialNo},</if>
+            <if test="currentSerialName != null">#{currentSerialName},</if>
+            <if test="status != null">#{status},</if>
+            <if test="relatedTaskId != null">#{relatedTaskId},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="remark != null">#{remark},</if>
+        </trim>
+    </insert>
+
+    <update id="updateTrialTaskProd" parameterType="TrialTaskProd">
+        update trial_task_prod
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="projectId != null">project_id = #{projectId},</if>
+            <if test="projectName != null">project_name = #{projectName},</if>
+            <if test="cardType != null">card_type = #{cardType},</if>
+            <if test="title != null">title = #{title},</if>
+            <if test="carType != null">car_type = #{carType},</if>
+            <if test="assemblyName != null">assembly_name = #{assemblyName},</if>
+            <if test="assemblyFigure != null">assembly_figure = #{assemblyFigure},</if>
+            <if test="pm != null">pm = #{pm},</if>
+            <if test="pe != null">pe = #{pe},</if>
+            <if test="currentSerialNo != null">current_serial_no = #{currentSerialNo},</if>
+            <if test="currentSerialName != null">current_serial_name = #{currentSerialName},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="relatedTaskId != null">related_task_id = #{relatedTaskId},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </trim>
+        where task_id = #{taskId}
+    </update>
+
+    <delete id="deleteTrialTaskProdByTaskId" parameterType="Long">
+        delete
+        from trial_task_prod
+        where task_id = #{taskId}
+    </delete>
+
+    <delete id="deleteTrialTaskProdByTaskIds" parameterType="String">
+        delete from trial_task_prod where task_id in
+        <foreach item="taskId" collection="array" open="(" separator="," close=")">
+            #{taskId}
+        </foreach>
+    </delete>
+
+    <select id="selectTrialTaskProdByRelatedTaskId" parameterType="Long" resultMap="TrialTaskProdResult">
+        <include refid="selectTrialTaskProdVo"/>
+        where related_task_id = #{relatedTaskId}
+    </select>
+</mapper>

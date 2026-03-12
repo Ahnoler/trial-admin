@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.trial.mapper.CardColumnHeaderMapper">
+    
+    <resultMap type="CardColumnHeader" id="CardColumnHeaderResult">
+        <result property="columnCode"    column="column_code"    />
+        <result property="parentCode"    column="parent_code"    />
+        <result property="columnSort"    column="column_sort"    />
+        <result property="columnLabel"    column="column_label"    />
+        <result property="columnValue"    column="column_value"    />
+        <result property="columnMin"    column="column_min"    />
+        <result property="columnMax"    column="column_max"    />
+        <result property="cardType"    column="card_type"    />
+        <result property="cssClass"    column="css_class"    />
+        <result property="listClass"    column="list_class"    />
+        <result property="isDefault"    column="is_default"    />
+        <result property="status"    column="status"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectCardColumnHeaderVo">
+        select column_code, parent_code, column_sort, column_label, column_value, column_min, column_max, card_type, css_class, list_class, is_default, status, create_by, create_time, update_by, update_time, remark from card_column_header
+    </sql>
+
+    <select id="selectCardColumnHeaderList" parameterType="CardColumnHeader" resultMap="CardColumnHeaderResult">
+        <include refid="selectCardColumnHeaderVo"/>
+        <where>  
+            <if test="parentCode != null "> and parent_code = #{parentCode}</if>
+            <if test="columnSort != null "> and column_sort = #{columnSort}</if>
+            <if test="columnLabel != null  and columnLabel != ''"> and column_label = #{columnLabel}</if>
+            <if test="columnValue != null  and columnValue != ''"> and column_value = #{columnValue}</if>
+            <if test="columnMin != null "> and column_min = #{columnMin}</if>
+            <if test="columnMax != null "> and column_max = #{columnMax}</if>
+            <if test="cardType != null  and cardType != ''"> and card_type = #{cardType}</if>
+            <if test="cssClass != null  and cssClass != ''"> and css_class = #{cssClass}</if>
+            <if test="listClass != null  and listClass != ''"> and list_class = #{listClass}</if>
+            <if test="isDefault != null  and isDefault != ''"> and is_default = #{isDefault}</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+        </where>
+    </select>
+    
+    <select id="selectCardColumnHeaderByColumnCode" parameterType="Long" resultMap="CardColumnHeaderResult">
+        <include refid="selectCardColumnHeaderVo"/>
+        where column_code = #{columnCode}
+    </select>
+        
+    <insert id="insertCardColumnHeader" parameterType="CardColumnHeader" useGeneratedKeys="true" keyProperty="columnCode">
+        insert into card_column_header
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="parentCode != null">parent_code,</if>
+            <if test="columnSort != null">column_sort,</if>
+            <if test="columnLabel != null">column_label,</if>
+            <if test="columnValue != null">column_value,</if>
+            <if test="columnMin != null">column_min,</if>
+            <if test="columnMax != null">column_max,</if>
+            <if test="cardType != null">card_type,</if>
+            <if test="cssClass != null">css_class,</if>
+            <if test="listClass != null">list_class,</if>
+            <if test="isDefault != null">is_default,</if>
+            <if test="status != null">status,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="remark != null">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="parentCode != null">#{parentCode},</if>
+            <if test="columnSort != null">#{columnSort},</if>
+            <if test="columnLabel != null">#{columnLabel},</if>
+            <if test="columnValue != null">#{columnValue},</if>
+            <if test="columnMin != null">#{columnMin},</if>
+            <if test="columnMax != null">#{columnMax},</if>
+            <if test="cardType != null">#{cardType},</if>
+            <if test="cssClass != null">#{cssClass},</if>
+            <if test="listClass != null">#{listClass},</if>
+            <if test="isDefault != null">#{isDefault},</if>
+            <if test="status != null">#{status},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="remark != null">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCardColumnHeader" parameterType="CardColumnHeader">
+        update card_column_header
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="parentCode != null">parent_code = #{parentCode},</if>
+            <if test="columnSort != null">column_sort = #{columnSort},</if>
+            <if test="columnLabel != null">column_label = #{columnLabel},</if>
+            <if test="columnValue != null">column_value = #{columnValue},</if>
+            <if test="columnMin != null">column_min = #{columnMin},</if>
+            <if test="columnMax != null">column_max = #{columnMax},</if>
+            <if test="cardType != null">card_type = #{cardType},</if>
+            <if test="cssClass != null">css_class = #{cssClass},</if>
+            <if test="listClass != null">list_class = #{listClass},</if>
+            <if test="isDefault != null">is_default = #{isDefault},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </trim>
+        where column_code = #{columnCode}
+    </update>
+
+    <delete id="deleteCardColumnHeaderByColumnCode" parameterType="Long">
+        delete from card_column_header where column_code = #{columnCode}
+    </delete>
+
+    <delete id="deleteCardColumnHeaderByColumnCodes" parameterType="String">
+        delete from card_column_header where column_code in 
+        <foreach item="columnCode" collection="array" open="(" separator="," close=")">
+            #{columnCode}
+        </foreach>
+    </delete>
+</mapper>

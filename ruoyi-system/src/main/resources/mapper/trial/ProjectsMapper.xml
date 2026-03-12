@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.trial.mapper.ProjectsMapper">
+    
+    <resultMap type="Projects" id="ProjectsResult">
+        <result property="id"    column="id"    />
+        <result property="projectName"    column="project_name"    />
+        <result property="projectType"    column="project_type"    />
+        <result property="status"    column="status"    />
+        <result property="pm"    column="pm"    />
+        <result property="pmName"    column="pmName"    />
+        <result property="assemblyName"    column="assembly_name"    />
+        <result property="assemblyDrawingNumber"    column="assembly_drawing_number"    />
+        <result property="projectDescription"    column="project_description"    />
+        <result property="startDate"    column="start_date"    />
+        <result property="endDate"    column="end_date"    />
+        <result property="projectStatus"    column="project_status"    />
+        <result property="budget"    column="budget"    />
+        <result property="actualCost"    column="actual_cost"    />
+        <result property="priority"    column="priority"    />
+        <result property="projectLeader"    column="project_leader"    />
+        <result property="contactInfo"    column="contact_info"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectProjectsVo">
+        select id, project_name, project_type, status, pm, pmName, assembly_name, assembly_drawing_number, project_description, start_date, end_date, project_status, budget, actual_cost, priority, project_leader, contact_info, create_by, create_time, update_by, update_time, remark from projects
+    </sql>
+
+    <select id="selectProjectsList" parameterType="Projects" resultMap="ProjectsResult">
+        <include refid="selectProjectsVo"/>
+        <where>  
+            <if test="projectName != null  and projectName != ''"> and project_name like concat('%', #{projectName}, '%')</if>
+            <if test="projectType != null  and projectType != ''"> and project_type = #{projectType}</if>
+            <if test="status != null "> and status = #{status}</if>
+            <if test="pm != null  and pm != ''"> and pm = #{pm}</if>
+            <if test="pmName != null  and pmName != ''"> and pmName like concat('%', #{pmName}, '%')</if>
+            <if test="assemblyName != null  and assemblyName != ''"> and assembly_name like concat('%', #{assemblyName}, '%')</if>
+            <if test="assemblyDrawingNumber != null  and assemblyDrawingNumber != ''"> and assembly_drawing_number like concat('%', #{assemblyDrawingNumber}, '%')</if>
+            <if test="projectStatus != null  and projectStatus != ''"> and project_status = #{projectStatus}</if>
+            <if test="priority != null  and priority != ''"> and priority = #{priority}</if>
+        </where>
+    </select>
+    
+    <select id="selectProjectsById" parameterType="Long" resultMap="ProjectsResult">
+        <include refid="selectProjectsVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertProjects" parameterType="Projects" useGeneratedKeys="true" keyProperty="id">
+        insert into projects
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="projectName != null">project_name,</if>
+            <if test="projectType != null">project_type,</if>
+            <if test="status != null">status,</if>
+            <if test="pm != null">pm,</if>
+            <if test="pmName != null">pmName,</if>
+            <if test="assemblyName != null">assembly_name,</if>
+            <if test="assemblyDrawingNumber != null">assembly_drawing_number,</if>
+            <if test="projectDescription != null">project_description,</if>
+            <if test="startDate != null">start_date,</if>
+            <if test="endDate != null">end_date,</if>
+            <if test="projectStatus != null">project_status,</if>
+            <if test="budget != null">budget,</if>
+            <if test="actualCost != null">actual_cost,</if>
+            <if test="priority != null">priority,</if>
+            <if test="projectLeader != null">project_leader,</if>
+            <if test="contactInfo != null">contact_info,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="remark != null">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="projectName != null">#{projectName},</if>
+            <if test="projectType != null">#{projectType},</if>
+            <if test="status != null">#{status},</if>
+            <if test="pm != null">#{pm},</if>
+            <if test="pmName != null">#{pmName},</if>
+            <if test="assemblyName != null">#{assemblyName},</if>
+            <if test="assemblyDrawingNumber != null">#{assemblyDrawingNumber},</if>
+            <if test="projectDescription != null">#{projectDescription},</if>
+            <if test="startDate != null">#{startDate},</if>
+            <if test="endDate != null">#{endDate},</if>
+            <if test="projectStatus != null">#{projectStatus},</if>
+            <if test="budget != null">#{budget},</if>
+            <if test="actualCost != null">#{actualCost},</if>
+            <if test="priority != null">#{priority},</if>
+            <if test="projectLeader != null">#{projectLeader},</if>
+            <if test="contactInfo != null">#{contactInfo},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="remark != null">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateProjects" parameterType="Projects">
+        update projects
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="projectName != null">project_name = #{projectName},</if>
+            <if test="projectType != null">project_type = #{projectType},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="pm != null">pm = #{pm},</if>
+            <if test="pmName != null">pmName = #{pmName},</if>
+            <if test="assemblyName != null">assembly_name = #{assemblyName},</if>
+            <if test="assemblyDrawingNumber != null">assembly_drawing_number = #{assemblyDrawingNumber},</if>
+            <if test="projectDescription != null">project_description = #{projectDescription},</if>
+            <if test="startDate != null">start_date = #{startDate},</if>
+            <if test="endDate != null">end_date = #{endDate},</if>
+            <if test="projectStatus != null">project_status = #{projectStatus},</if>
+            <if test="budget != null">budget = #{budget},</if>
+            <if test="actualCost != null">actual_cost = #{actualCost},</if>
+            <if test="priority != null">priority = #{priority},</if>
+            <if test="projectLeader != null">project_leader = #{projectLeader},</if>
+            <if test="contactInfo != null">contact_info = #{contactInfo},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteProjectsById" parameterType="Long">
+        delete from projects where id = #{id}
+    </delete>
+
+    <delete id="deleteProjectsByIds" parameterType="String">
+        delete from projects where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

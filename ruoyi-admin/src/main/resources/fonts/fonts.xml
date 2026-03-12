@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fontFamilies>
+    <!--  name 的值要与模板字体名字保持一致  -->
+    <fontFamily name="黑体">
+        <normal>
+            <ttf>fonts/simhei.TTF</ttf>
+            <svg>fonts/simhei.TTF</svg>
+            <eot>fonts/simhei.TTF</eot>
+            <woff>fonts/simhei.TTF</woff>
+        </normal>
+        <bold>fonts/simhei.TTF</bold>
+        <italic>fonts/simhei.TTF</italic>
+        <boldItalic>fonts/simhei.TTF</boldItalic>
+        <pdfEncoding>Identity-H</pdfEncoding>
+        <pdfEmbedded>true</pdfEmbedded>
+        <exportFonts>
+            <export key="net.sf.jasperreports.html">'黑体', Arial, Helvetica, sans-serif</export>
+            <export key="net.sf.jasperreports.xhtml">'黑体', Arial, Helvetica, sans-serif</export>
+        </exportFonts>
+    </fontFamily>
+</fontFamilies>

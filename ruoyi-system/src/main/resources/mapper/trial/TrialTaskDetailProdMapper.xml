@@ -1,0 +1,436 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.trial.mapper.TrialTaskDetailProdMapper">
+    <resultMap type="TrialTaskDetailProd" id="TrialTaskDetailProdResult">
+        <result property="id" column="id"/>
+        <result property="taskId" column="task_id"/>
+        <result property="cardType" column="card_type"/>
+        <result property="columnCode" column="column_code"/>
+        <result property="serialNo" column="serial_no"/>
+        <result property="program" column="program"/>
+        <result property="name" column="name"/>
+        <result property="figure" column="figure"/>
+        <result property="trialQuantity" column="trial_quantity"/>
+        <result property="inspectionQuantity" column="inspection_quantity"/>
+        <result property="manufacturingQualityStatus" column="manufacturing_quality_status"/>
+        <result property="manufacturingArea" column="manufacturing_area"/>
+        <result property="director" column="director"/>
+        <result property="directorTel" column="director_tel"/>
+        <result property="processQualityStatus" column="process_quality_status"/>
+        <result property="meDirector" column="me_director"/>
+        <result property="meDirectorTel" column="me_director_tel"/>
+        <result property="notes" column="notes"/>
+        <result property="status" column="status"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="remark" column="remark"/>
+    </resultMap>
+
+    <sql id="selectTrialTaskDetailProdVo">
+        select id,
+               task_id,
+               card_type,
+               column_code,
+               serial_no,
+               program,
+               name,
+               figure,
+               trial_quantity,
+               inspection_quantity,
+               manufacturing_quality_status,
+               manufacturing_area,
+               director,
+               director_tel,
+               process_quality_status,
+               me_director,
+               me_director_tel,
+               notes,
+               status,
+               create_by,
+               create_time,
+               update_by,
+               update_time,
+               remark
+        from trial_task_detail_prod
+    </sql>
+
+    <select id="selectTrialTaskDetailProdList" parameterType="TrialTaskDetailProd"
+            resultMap="TrialTaskDetailProdResult">
+        <include refid="selectTrialTaskDetailProdVo"/>
+        <where>
+            <if test="taskId != null">
+                and task_id = #{taskId}
+            </if>
+            <if test="cardType != null  and cardType != ''">
+                and card_type = #{cardType}
+            </if>
+            <if test="columnCode != null">
+                and column_code = #{columnCode}
+            </if>
+            <if test="serialNo != null">
+                and serial_no = #{serialNo}
+            </if>
+            <if test="program != null  and program != ''">
+                and program = #{program}
+            </if>
+            <if test="name != null  and name != ''">
+                and name like concat('%', #{name}, '%')
+            </if>
+            <if test="figure != null  and figure != ''">
+                and figure = #{figure}
+            </if>
+            <if test="trialQuantity != null  and trialQuantity != ''">
+                and trial_quantity = #{trialQuantity}
+            </if>
+            <if test="inspectionQuantity != null  and inspectionQuantity != ''">
+                and inspection_quantity = #{inspectionQuantity}
+            </if>
+            <if test="manufacturingQualityStatus != null  and manufacturingQualityStatus != ''">
+                and manufacturing_quality_status = #{manufacturingQualityStatus}
+            </if>
+            <if test="manufacturingArea != null  and manufacturingArea != ''">
+                and manufacturing_area = #{manufacturingArea}
+            </if>
+            <if test="director != null  and director != ''">
+                and director = #{director}
+            </if>
+            <if test="directorTel != null  and directorTel != ''">
+                and director_tel = #{directorTel}
+            </if>
+            <if test="processQualityStatus != null  and processQualityStatus != ''">
+                and process_quality_status = #{processQualityStatus}
+            </if>
+            <if test="meDirector != null  and meDirector != ''">
+                and me_director = #{meDirector}
+            </if>
+            <if test="meDirectorTel != null  and meDirectorTel != ''">
+                and me_director_tel = #{meDirectorTel}
+            </if>
+            <if test="notes != null  and notes != ''">
+                and notes = #{notes}
+            </if>
+            <if test="status != null  and status != ''">
+                and status = #{status}
+            </if>
+            <if test="urlType != null  and urlType != ''">
+                <if test="urlType == 1">
+                    and status in (1, 2)
+                </if>
+            </if>
+        </where>
+        order by task_id, serial_no
+    </select>
+
+    <select id="selectTrialTaskDetailProdById" parameterType="Long" resultMap="TrialTaskDetailProdResult">
+        <include refid="selectTrialTaskDetailProdVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertTrialTaskDetailProd" parameterType="TrialTaskDetailProd" useGeneratedKeys="true" keyProperty="id">
+        insert into trial_task_detail_prod
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="taskId != null">
+                task_id,
+            </if>
+            <if test="cardType != null">
+                card_type,
+            </if>
+            <if test="columnCode != null">
+                column_code,
+            </if>
+            <if test="serialNo != null">
+                serial_no,
+            </if>
+            <if test="program != null">
+                program,
+            </if>
+            <if test="name != null">
+                name,
+            </if>
+            <if test="figure != null">
+                figure,
+            </if>
+            <if test="trialQuantity != null">
+                trial_quantity,
+            </if>
+            <if test="inspectionQuantity != null">
+                inspection_quantity,
+            </if>
+            <if test="manufacturingQualityStatus != null">
+                manufacturing_quality_status,
+            </if>
+            <if test="manufacturingArea != null">
+                manufacturing_area,
+            </if>
+            <if test="director != null">
+                director,
+            </if>
+            <if test="directorTel != null">
+                director_tel,
+            </if>
+            <if test="processQualityStatus != null">
+                process_quality_status,
+            </if>
+            <if test="meDirector != null">
+                me_director,
+            </if>
+            <if test="meDirectorTel != null">
+                me_director_tel,
+            </if>
+            <if test="notes != null">
+                notes,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+            <if test="createBy != null">
+                create_by,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="updateBy != null">
+                update_by,
+            </if>
+            <if test="updateTime != null">
+                update_time,
+            </if>
+            <if test="remark != null">
+                remark,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="taskId != null">
+                #{taskId},
+            </if>
+            <if test="cardType != null">
+                #{cardType},
+            </if>
+            <if test="columnCode != null">
+                #{columnCode},
+            </if>
+            <if test="serialNo != null">
+                #{serialNo},
+            </if>
+            <if test="program != null">
+                #{program},
+            </if>
+            <if test="name != null">
+                #{name},
+            </if>
+            <if test="figure != null">
+                #{figure},
+            </if>
+            <if test="trialQuantity != null">
+                #{trialQuantity},
+            </if>
+            <if test="inspectionQuantity != null">
+                #{inspectionQuantity},
+            </if>
+            <if test="manufacturingQualityStatus != null">
+                #{manufacturingQualityStatus},
+            </if>
+            <if test="manufacturingArea != null">
+                #{manufacturingArea},
+            </if>
+            <if test="director != null">
+                #{director},
+            </if>
+            <if test="directorTel != null">
+                #{directorTel},
+            </if>
+            <if test="processQualityStatus != null">
+                #{processQualityStatus},
+            </if>
+            <if test="meDirector != null">
+                #{meDirector},
+            </if>
+            <if test="meDirectorTel != null">
+                #{meDirectorTel},
+            </if>
+            <if test="notes != null">
+                #{notes},
+            </if>
+            <if test="status != null">
+                #{status},
+            </if>
+            <if test="createBy != null">
+                #{createBy},
+            </if>
+            <if test="createTime != null">
+                #{createTime},
+            </if>
+            <if test="updateBy != null">
+                #{updateBy},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime},
+            </if>
+            <if test="remark != null">
+                #{remark},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateTrialTaskDetailProd" parameterType="TrialTaskDetailProd">
+        update trial_task_detail_prod
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="taskId != null">
+                task_id = #{taskId},
+            </if>
+            <if test="cardType != null">
+                card_type = #{cardType},
+            </if>
+            <if test="columnCode != null">
+                column_code = #{columnCode},
+            </if>
+            <if test="serialNo != null">
+                serial_no = #{serialNo},
+            </if>
+            <if test="program != null">
+                program = #{program},
+            </if>
+            <if test="name != null">
+                name = #{name},
+            </if>
+            <if test="figure != null">
+                figure = #{figure},
+            </if>
+            <if test="trialQuantity != null">
+                trial_quantity = #{trialQuantity},
+            </if>
+            <if test="inspectionQuantity != null">
+                inspection_quantity = #{inspectionQuantity},
+            </if>
+            <if test="manufacturingQualityStatus != null">
+                manufacturing_quality_status = #{manufacturingQualityStatus},
+            </if>
+            <if test="manufacturingArea != null">
+                manufacturing_area = #{manufacturingArea},
+            </if>
+            <if test="director != null">
+                director = #{director},
+            </if>
+            <if test="directorTel != null">
+                director_tel = #{directorTel},
+            </if>
+            <if test="processQualityStatus != null">
+                process_quality_status = #{processQualityStatus},
+            </if>
+            <if test="meDirector != null">
+                me_director = #{meDirector},
+            </if>
+            <if test="meDirectorTel != null">
+                me_director_tel = #{meDirectorTel},
+            </if>
+            <if test="notes != null">
+                notes = #{notes},
+            </if>
+            <if test="status != null">
+                status = #{status},
+            </if>
+            <if test="createBy != null">
+                create_by = #{createBy},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+            <if test="updateBy != null">
+                update_by = #{updateBy},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+            <if test="remark != null">
+                remark = #{remark},
+            </if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteTrialTaskDetailProdById" parameterType="Long">
+        delete
+        from trial_task_detail_prod
+        where id = #{id}
+    </delete>
+
+    <delete id="deleteTrialTaskDetailProdByIds" parameterType="String">
+        delete
+        from trial_task_detail_prod where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <insert id="batchTrialTaskDetailProd">
+        insert into trial_task_detail_prod(task_id, card_type, column_code, serial_no, program, name, figure,
+                                           trial_quantity, inspection_quantity, manufacturing_quality_status,
+                                           manufacturing_area, director, director_tel, process_quality_status,
+                                           me_director, me_director_tel, notes, status) values
+        <foreach item="item" index="index" collection="list" separator=",">
+            (#{item.taskId},
+             #{item.cardType},
+             #{item.columnCode},
+             #{item.serialNo},
+             #{item.program},
+             #{item.name},
+             #{item.figure},
+             #{item.trialQuantity},
+             #{item.inspectionQuantity},
+             #{item.manufacturingQualityStatus},
+             #{item.manufacturingArea},
+             #{item.director},
+             #{item.directorTel},
+             #{item.processQualityStatus},
+             #{item.meDirector},
+             #{item.meDirectorTel},
+             #{item.notes},
+             #{item.status})
+        </foreach>
+    </insert>
+
+
+    <select id="selectTrialTaskDetailProdByTaskId" parameterType="Long" resultMap="TrialTaskDetailProdResult">
+        <include refid="selectTrialTaskDetailProdVo"/>
+        where task_id = #{taskId}
+        order by column_code
+    </select>
+
+    <delete id="deleteTrialtaskDetailProdByTaskId">
+        delete
+        from trial_task_detail_prod where  task_id in
+        <foreach item="id" collection="taskIds" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="selectTrialTaskDetailProdByUser" resultMap="TrialTaskDetailProdResult">
+        <include refid="selectTrialTaskDetailProdVo"/>
+        where `status` = 2
+        and create_by = #{userId}
+        order by update_time DESC, id desc
+    </select>
+
+    <select id="selectTrialTaskDetailProdPdfDTOByTaskId" resultType="TrialTaskDetailProdPdfDTO">
+        select id,
+               program,
+               name,
+               figure,
+               trial_quantity,
+               inspection_quantity,
+               manufacturing_quality_status,
+               manufacturing_area,
+               director,
+               director_tel,
+               process_quality_status,
+               me_director,
+               me_director_tel,
+               notes
+        from trial_task_detail_prod
+        where task_id = #{taskId}
+    </select>
+</mapper>
