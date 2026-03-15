@@ -31,7 +31,7 @@
 				<el-table-column label="试制数量" align="center" prop="trialQuantity" />
 				<el-table-column label="分流数量" align="center" width="150">
 					<template slot-scope="scope">
-						<el-input-number v-model="scope.row.shuntQty" :min="0" :max="parseInt(scope.row.inspectionQuantity)-parseInt(scope.row.trialQuantity)" size="mini" :disabled="!isSelected(scope.row)"></el-input-number>
+						<el-input-number v-model="scope.row.shuntQty" :min="0" :max="parseInt(scope.row.trialQuantity)" size="mini" :disabled="!isSelected(scope.row) || scope.row.status !== '1'"></el-input-number>
 					</template>
 				</el-table-column>
 				<el-table-column label="送检数量" align="center" prop="inspectionQuantity" />
@@ -126,7 +126,7 @@
 		methods: {
 			// 判断行是否可选
 			checkSelectable(row) {
-				return row.status === '3';
+				return row.status === '1';
 			},
 			// 判断行是否被选中
 			isSelected(row) {

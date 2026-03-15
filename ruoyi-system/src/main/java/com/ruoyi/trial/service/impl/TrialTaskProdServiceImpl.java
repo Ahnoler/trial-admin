@@ -118,11 +118,10 @@ public class TrialTaskProdServiceImpl implements ITrialTaskProdService {
                 cardModelDetailProdService.selectCardModelDetailProdList(cardModelDetailProd);
 
         // 新增试制卡片
-        List<TrialTaskDetailProd> list = new ArrayList<TrialTaskDetailProd>();
+        List<TrialTaskDetailProd> list = new ArrayList<>();
         long taskId = trialTaskProd.getTaskId();
 
-        for (int i = 0; i < cardModelDetailProdList.size(); i++) {
-            CardModelDetailProd node = cardModelDetailProdList.get(i);
+        for (CardModelDetailProd node : cardModelDetailProdList) {
             TrialTaskDetailProd newNode = new TrialTaskDetailProd();
             newNode.setTaskId(taskId);
             newNode.setCardType(node.getCardType());
@@ -161,8 +160,7 @@ public class TrialTaskProdServiceImpl implements ITrialTaskProdService {
     public int updateTrialTaskProd(TrialTaskProd trialTaskProd) {
 
         trialTaskProd.setUpdateTime(DateUtils.getNowDate());
-        int flg =trialTaskProdMapper.updateTrialTaskProd(trialTaskProd);
-        return flg;
+        return trialTaskProdMapper.updateTrialTaskProd(trialTaskProd);
     }
 
     /**
@@ -191,13 +189,13 @@ public class TrialTaskProdServiceImpl implements ITrialTaskProdService {
         List<TrialTaskDetailProd> list = trialTaskDetailProdMapper.selectTrialTaskDetailProdList(node);
         for (int i = 0; i < list.size(); i++) {
             TrialTaskDetailProd currentNode = list.get(i);
-            if (currentNode.getSerialNo().intValue() < trialTaskProd.getCurrentSerialNo().intValue()) {
+            if (currentNode.getSerialNo() < trialTaskProd.getCurrentSerialNo()) {
                 currentNode.setStatus("3");//已审核
                 trialTaskDetailProdMapper.updateTrialTaskDetailProd(currentNode);
             } else if (currentNode.getSerialNo().intValue() == trialTaskProd.getCurrentSerialNo().intValue()) {
                 currentNode.setStatus("1");//正在填报
                 trialTaskDetailProdMapper.updateTrialTaskDetailProd(currentNode);
-            } else if (currentNode.getSerialNo().intValue() > trialTaskProd.getCurrentSerialNo().intValue()) {
+            } else if (currentNode.getSerialNo() > trialTaskProd.getCurrentSerialNo()) {
                 currentNode.setStatus("0");//未填报
                 trialTaskDetailProdMapper.updateTrialTaskDetailProd(currentNode);
             }
@@ -218,7 +216,7 @@ public class TrialTaskProdServiceImpl implements ITrialTaskProdService {
         node.setTaskId(oldTaskId);
         List<TrialTaskDetailProd> list = trialTaskDetailProdMapper.selectTrialTaskDetailProdList(node);
         List<TrialTaskDetailProd> listInfo = JSONArray.parseArray(trialTaskProd.getListStr(), TrialTaskDetailProd.class);
-        if (listInfo.size() > 0) {
+        if (!listInfo.isEmpty()) {
             //设置关联任务ID
             trialTaskProd.setRelatedTaskId(oldTaskId);
             trialTaskProdMapper.updateTrialTaskProd(trialTaskProd);
@@ -255,46 +253,44 @@ public class TrialTaskProdServiceImpl implements ITrialTaskProdService {
             TrialTaskProd parentTask = selectTrialTaskProdByTaskId(oldTaskId);
             Integer currentSerialNo = parentTask.getCurrentSerialNo();
             for (TrialTaskDetailProd process : allProcesses) {
-                if (process.getSerialNo().intValue() < currentSerialNo.intValue()) {
+                if (process.getSerialNo() < currentSerialNo) {
                     process.setStatus("3"); // 已审核
                 } else if (process.getSerialNo().intValue() == currentSerialNo.intValue()) {
                     process.setStatus("1"); // 正在填报
-                } else if (process.getSerialNo().intValue() > currentSerialNo.intValue()) {
+                } else if (process.getSerialNo() > currentSerialNo) {
                     process.setStatus("0"); // 未填报
                 }
                 trialTaskDetailProdMapper.updateTrialTaskDetailProd(process);
             }
             
-            List<TrialTaskDetailProd> listInfo2 = JSONArray.parseArray(trialTaskProd.getListStr(), TrialTaskDetailProd.class);
-            if (listInfo2.size() > 0) {
-                listInfo2.forEach(item -> {
-                    Integer qty = 0;
-                    Integer shuntQty = 0;
+            // 复用已解析的listInfo，不再重复解析
+            listInfo.forEach(item -> {
+                int qty;
+                int shuntQty = 0;
 
-                    if (StringUtils.isNotEmpty(item.getTrialQuantity())) {
-                        shuntQty = Integer.parseInt(item.getShuntQty());
-                    }
-                    Integer trialQty = 0;
-                    if (StringUtils.isNotEmpty(item.getTrialQuantity())) {
-                        trialQty = Integer.parseInt(item.getTrialQuantity());
-                    }
-                    qty = trialQty - shuntQty;
-                    if (qty > 0) {
-                        item.setTrialQuantity(qty + "");
-                    } else {
-                        item.setTrialQuantity("0");
-                    }
-
-                });
-                for (int i = 0; i < listInfo2.size(); i++) {
-                    TrialTaskDetailProd currentNode = new TrialTaskDetailProd();
-                    currentNode.setId(listInfo2.get(i).getId());
-                    if (StringUtils.isNotEmpty(listInfo2.get(i).getTrialQuantity())) {
-                        currentNode.setTrialQuantity(listInfo2.get(i).getTrialQuantity());
-                    }
-
-                    trialTaskDetailProdMapper.updateTrialTaskDetailProd(currentNode);
+                if (StringUtils.isNotEmpty(item.getTrialQuantity())) {
+                    shuntQty = Integer.parseInt(item.getShuntQty());
                 }
+                int trialQty = 0;
+                if (StringUtils.isNotEmpty(item.getTrialQuantity())) {
+                    trialQty = Integer.parseInt(item.getTrialQuantity());
+                }
+                qty = trialQty - shuntQty;
+                if (qty > 0) {
+                    item.setTrialQuantity(qty + "");
+                } else {
+                    item.setTrialQuantity("0");
+                }
+
+            });
+            for (TrialTaskDetailProd trialTaskDetailProd : listInfo) {
+                TrialTaskDetailProd currentNode = new TrialTaskDetailProd();
+                currentNode.setId(trialTaskDetailProd.getId());
+                if (StringUtils.isNotEmpty(trialTaskDetailProd.getTrialQuantity())) {
+                    currentNode.setTrialQuantity(trialTaskDetailProd.getTrialQuantity());
+                }
+
+                trialTaskDetailProdMapper.updateTrialTaskDetailProd(currentNode);
             }
         }
         return 1;
@@ -304,7 +300,6 @@ public class TrialTaskProdServiceImpl implements ITrialTaskProdService {
      * 导出试制任务-零件流转卡信息
      *
      * @param id 试制任务信息主键
-     * @return 结果
      */
     @Override
     public void exportPdf(Long id, HttpServletResponse response) throws Exception {
