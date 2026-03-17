@@ -1,17 +1,79 @@
 {
-	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
+	"pages": [
 		{
 			"path": "pages/index/index",
 			"style": {
-				"navigationBarTitleText": "uni-app"
+				"navigationBarTitleText": "首页"
+			}
+		},
+		{
+			"path": "pages/login/login",
+			"style": {
+				"navigationBarTitleText": "登录"
+			}
+		},
+		{
+			"path": "pages/scan/scan",
+			"style": {
+				"navigationBarTitleText": "扫码填报"
+			}
+		},
+		{
+			"path": "pages/task-detail/task-detail",
+			"style": {
+				"navigationBarTitleText": "任务详情"
+			}
+		},
+		{
+			"path": "pages/fill-form/fill-form",
+			"style": {
+				"navigationBarTitleText": "填报信息"
+			}
+		},
+		{
+			"path": "pages/history/history",
+			"style": {
+				"navigationBarTitleText": "历史记录"
+			}
+		},
+		{
+			"path": "pages/user/user",
+			"style": {
+				"navigationBarTitleText": "个人中心"
 			}
 		}
 	],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
-		"navigationBarTitleText": "uni-app",
-		"navigationBarBackgroundColor": "#F8F8F8",
+		"navigationBarTitleText": "试制任务管理",
+		"navigationBarBackgroundColor": "#FFFFFF",
 		"backgroundColor": "#F8F8F8"
+	},
+	"tabBar": {
+		"color": "#999999",
+		"selectedColor": "#007AFF",
+		"backgroundColor": "#FFFFFF",
+		"borderStyle": "black",
+		"list": [
+			{
+				"pagePath": "pages/index/index",
+				"text": "首页",
+				"iconPath": "static/tabbar/home.png",
+				"selectedIconPath": "static/tabbar/home-active.png"
+			},
+			{
+				"pagePath": "pages/history/history",
+				"text": "历史",
+				"iconPath": "static/tabbar/history.png",
+				"selectedIconPath": "static/tabbar/history-active.png"
+			},
+			{
+				"pagePath": "pages/user/user",
+				"text": "我的",
+				"iconPath": "static/tabbar/user.png",
+				"selectedIconPath": "static/tabbar/user-active.png"
+			}
+		]
 	},
 	"uniIdRouter": {}
 }

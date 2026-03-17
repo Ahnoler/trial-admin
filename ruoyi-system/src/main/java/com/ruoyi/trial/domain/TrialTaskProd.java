@@ -98,6 +98,17 @@ public class TrialTaskProd extends BaseEntity {
      */
     private Long relatedTaskId;
     
+    /**
+     * 二维码标识
+     */
+    @Excel(name = "二维码标识")
+    private String qrCode;
+    
+    /**
+     * 二维码图片URL
+     */
+    private String qrCodeUrl;
+    
     //    卡片详情
     private String listStr;
 
@@ -118,6 +129,8 @@ public class TrialTaskProd extends BaseEntity {
                 .append("currentSerialName", getCurrentSerialName())
                 .append("status", getStatus())
                 .append("relatedTaskId", getRelatedTaskId())
+                .append("qrCode", getQrCode())
+                .append("qrCodeUrl", getQrCodeUrl())
                 .append("createBy", getCreateBy())
                 .append("createTime", getCreateTime())
                 .append("updateBy", getUpdateBy())
