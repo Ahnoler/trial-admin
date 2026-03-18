@@ -66,4 +66,19 @@ public interface TrialTaskProdMapper
      * @return 试制任务信息集合
      */
     public List<TrialTaskProd> selectTrialTaskProdByRelatedTaskId(Long relatedTaskId);
+
+    /**
+     * 根据二维码标识查询试制任务信息
+     * 
+     * @param qrCode 二维码标识
+     * @return 试制任务信息
+     */
+    public TrialTaskProd selectTrialTaskProdByQrCode(String qrCode);
+
+    /**
+     * 查询没有二维码的试制任务信息列表
+     * 
+     * @return 试制任务信息集合
+     */
+    public List<TrialTaskProd> selectTrialTaskProdWithoutQrCode();
 }

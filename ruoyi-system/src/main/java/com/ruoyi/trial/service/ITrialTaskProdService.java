@@ -117,4 +117,19 @@ public interface ITrialTaskProdService
      * @throws Exception 异常
      */
     public void printTrialTaskProd(Long id, Long printType, String userId, HttpServletResponse response) throws Exception;
+
+    /**
+     * 根据二维码标识查询零件流转卡
+     * 
+     * @param qrCode 二维码标识
+     * @return 零件流转卡
+     */
+    public TrialTaskProd selectTrialTaskProdByQrCode(String qrCode);
+
+    /**
+     * 批量为没有二维码的流转卡生成二维码
+     * 
+     * @return 生成的二维码数量
+     */
+    public int batchGenerateQrCode();
 }

@@ -10,6 +10,8 @@ import java.util.Map;
 import com.alibaba.fastjson2.JSONArray;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.StringUtils;
+import com.ruoyi.common.utils.QRCodeUtil;
+import com.ruoyi.common.utils.uuid.UUID;
 import com.ruoyi.common.entity.ActionLog;
 import org.springframework.beans.BeanUtils;
 import com.ruoyi.trial.domain.CardModelDetailProd;
@@ -83,11 +85,17 @@ public class TrialTaskProdServiceImpl implements ITrialTaskProdService {
      */
     @Override
     public int insertTrialTaskProd(TrialTaskProd trialTaskProd) {
-        trialTaskProd.setCurrentSerialNo(101);//初始化当前环节
-        trialTaskProd.setCurrentSerialName("物料1");//初始化当前环节
-        trialTaskProd.setCardType("PROD");//初始化卡片
+        trialTaskProd.setCurrentSerialNo(101);
+        trialTaskProd.setCurrentSerialName("物料1");
+        trialTaskProd.setCardType("PROD");
         trialTaskProd.setCreateTime(DateUtils.getNowDate());
         trialTaskProdMapper.insertTrialTaskProd(trialTaskProd);
+        
+        String qrCode = "TASK_" + trialTaskProd.getTaskId() + "_" + UUID.randomUUID().toString().substring(0, 8);
+        String qrCodeBase64 = QRCodeUtil.generateQRCodeBase64(qrCode, 200, 200);
+        trialTaskProd.setQrCode(qrCode);
+        trialTaskProd.setQrCodeUrl(qrCodeBase64);
+        trialTaskProdMapper.updateTrialTaskProd(trialTaskProd);
 
         return insertTrialTaskProdDetail(trialTaskProd);
     }
@@ -100,7 +108,15 @@ public class TrialTaskProdServiceImpl implements ITrialTaskProdService {
      */
     @Override
     public int copyTrialTaskProd(TrialTaskProd trialTaskProd) {
-        return trialTaskProdMapper.insertTrialTaskProd(trialTaskProd);
+        trialTaskProdMapper.insertTrialTaskProd(trialTaskProd);
+        
+        String qrCode = "TASK_" + trialTaskProd.getTaskId() + "_" + UUID.randomUUID().toString().substring(0, 8);
+        String qrCodeBase64 = QRCodeUtil.generateQRCodeBase64(qrCode, 200, 200);
+        trialTaskProd.setQrCode(qrCode);
+        trialTaskProd.setQrCodeUrl(qrCodeBase64);
+        trialTaskProdMapper.updateTrialTaskProd(trialTaskProd);
+        
+        return 1;
     }
 
     /**
@@ -310,6 +326,15 @@ public class TrialTaskProdServiceImpl implements ITrialTaskProdService {
         map.put("assemblyFigure", trialTaskProd.getAssemblyFigure());
         map.put("pm", trialTaskProd.getPm());
         map.put("pe", trialTaskProd.getPe());
+        map.put("qrCode", trialTaskProd.getQrCode());
+        
+        if (trialTaskProd.getQrCodeUrl() != null && trialTaskProd.getQrCodeUrl().contains(",")) {
+            String base64Data = trialTaskProd.getQrCodeUrl().substring(trialTaskProd.getQrCodeUrl().indexOf(",") + 1);
+            byte[] qrCodeImage = java.util.Base64.getDecoder().decode(base64Data);
+            map.put("qrCodeImage", qrCodeImage);
+        } else {
+            map.put("qrCodeImage", null);
+        }
 
         // 1、设置请求头类型
         response.setContentType("application/pdf");
@@ -425,6 +450,7 @@ public class TrialTaskProdServiceImpl implements ITrialTaskProdService {
         out.println("<tr><td>PE姓名</td><td>" + task.getPe() + "</td></tr>");
         out.println("<tr><td>当前程序</td><td>" + task.getCurrentSerialName() + "</td></tr>");
         out.println("<tr><td>状态</td><td>" + ("0".equals(task.getStatus()) ? "正常" : "停用") + "</td></tr>");
+        out.println("<tr><td>二维码</td><td><img src='" + task.getQrCodeUrl() + "' width='100' height='100' style='vertical-align: middle;'/></td></tr>");
         out.println("</table>");
 
         // 打印流转程序详情
@@ -482,5 +508,25 @@ public class TrialTaskProdServiceImpl implements ITrialTaskProdService {
         actionLog.setCreateTime(DateUtils.getTime());
         actionLogMapper.insert(actionLog);
         return 1;
+    }
+
+    @Override
+    public TrialTaskProd selectTrialTaskProdByQrCode(String qrCode) {
+        return trialTaskProdMapper.selectTrialTaskProdByQrCode(qrCode);
+    }
+
+    @Override
+    public int batchGenerateQrCode() {
+        List<TrialTaskProd> taskList = trialTaskProdMapper.selectTrialTaskProdWithoutQrCode();
+        int count = 0;
+        for (TrialTaskProd task : taskList) {
+            String qrCode = "TASK_" + task.getTaskId() + "_" + UUID.randomUUID().toString().substring(0, 8);
+            String qrCodeBase64 = QRCodeUtil.generateQRCodeBase64(qrCode, 200, 200);
+            task.setQrCode(qrCode);
+            task.setQrCodeUrl(qrCodeBase64);
+            trialTaskProdMapper.updateTrialTaskProd(task);
+            count++;
+        }
+        return count;
     }
 }

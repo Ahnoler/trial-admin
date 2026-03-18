@@ -5,6 +5,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.ruoyi.common.core.domain.model.LoginUser;
 import com.ruoyi.common.utils.ServletUtils;
+import com.ruoyi.common.utils.QRCodeUtil;
+import com.ruoyi.common.utils.uuid.UUID;
 import com.ruoyi.framework.web.service.TokenService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -153,5 +155,41 @@ public class TrialTaskProdController extends BaseController {
         LoginUser loginUser = tokenService.getLoginUser(ServletUtils.getRequest());
         String userId = loginUser.getUser().getUserId().toString();
         trialTaskProdService.printTrialTaskProd(id, printType, userId, response);
+    }
+
+    @GetMapping("/scan/{qrCode}")
+    @Operation(summary = "扫码识别-根据二维码获取流转卡信息", description = "小程序端扫描二维码后调用此接口获取流转卡详情")
+    public AjaxResult scanQrCode(@PathVariable("qrCode") String qrCode) {
+        TrialTaskProd task = trialTaskProdService.selectTrialTaskProdByQrCode(qrCode);
+        if (task == null) {
+            return AjaxResult.error("未找到对应的流转卡，请检查二维码是否正确");
+        }
+        if ("2".equals(task.getStatus())) {
+            return AjaxResult.error("该流转卡已结束，无法进行操作");
+        }
+        return success(task);
+    }
+
+    @PostMapping("/regenerateQrCode/{taskId}")
+    @PreAuthorize("@ss.hasPermi('trial:prod:edit')")
+    @Operation(summary = "重新生成二维码", description = "为指定流转卡重新生成二维码")
+    public AjaxResult regenerateQrCode(@PathVariable Long taskId) {
+        TrialTaskProd task = trialTaskProdService.selectTrialTaskProdByTaskId(taskId);
+        if (task == null) {
+            return AjaxResult.error("未找到对应的流转卡");
+        }
+        String qrCode = "TASK_" + task.getTaskId() + "_" + UUID.randomUUID().toString().substring(0, 8);
+        String qrCodeBase64 = QRCodeUtil.generateQRCodeBase64(qrCode, 200, 200);
+        task.setQrCode(qrCode);
+        task.setQrCodeUrl(qrCodeBase64);
+        return toAjax(trialTaskProdService.updateTrialTaskProd(task));
+    }
+
+    @PostMapping("/batchGenerateQrCode")
+    @PreAuthorize("@ss.hasPermi('trial:prod:edit')")
+    @Operation(summary = "批量生成二维码", description = "为所有没有二维码的流转卡批量生成二维码")
+    public AjaxResult batchGenerateQrCode() {
+        int count = trialTaskProdService.batchGenerateQrCode();
+        return AjaxResult.success("成功为 " + count + " 个流转卡生成二维码");
     }
 }

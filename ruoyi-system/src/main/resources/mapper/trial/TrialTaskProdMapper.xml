@@ -24,6 +24,8 @@
         <result property="updateBy" column="update_by"/>
         <result property="updateTime" column="update_time"/>
         <result property="remark" column="remark"/>
+        <result property="qrCode" column="qr_code"/>
+        <result property="qrCodeUrl" column="qr_code_url"/>
     </resultMap>
 
     <sql id="selectTrialTaskProdVo">
@@ -45,7 +47,9 @@
                create_time,
                update_by,
                update_time,
-               remark
+               remark,
+               qr_code,
+               qr_code_url
         from trial_task_prod
     </sql>
 
@@ -99,6 +103,8 @@
             <if test="updateBy != null">update_by,</if>
             <if test="updateTime != null">update_time,</if>
             <if test="remark != null">remark,</if>
+            <if test="qrCode != null">qr_code,</if>
+            <if test="qrCodeUrl != null">qr_code_url,</if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="projectId != null">#{projectId},</if>
@@ -119,6 +125,8 @@
             <if test="updateBy != null">#{updateBy},</if>
             <if test="updateTime != null">#{updateTime},</if>
             <if test="remark != null">#{remark},</if>
+            <if test="qrCode != null">#{qrCode},</if>
+            <if test="qrCodeUrl != null">#{qrCodeUrl},</if>
         </trim>
     </insert>
 
@@ -143,6 +151,8 @@
             <if test="updateBy != null">update_by = #{updateBy},</if>
             <if test="updateTime != null">update_time = #{updateTime},</if>
             <if test="remark != null">remark = #{remark},</if>
+            <if test="qrCode != null">qr_code = #{qrCode},</if>
+            <if test="qrCodeUrl != null">qr_code_url = #{qrCodeUrl},</if>
         </trim>
         where task_id = #{taskId}
     </update>
@@ -163,5 +173,15 @@
     <select id="selectTrialTaskProdByRelatedTaskId" parameterType="Long" resultMap="TrialTaskProdResult">
         <include refid="selectTrialTaskProdVo"/>
         where related_task_id = #{relatedTaskId}
+    </select>
+
+    <select id="selectTrialTaskProdByQrCode" parameterType="String" resultMap="TrialTaskProdResult">
+        <include refid="selectTrialTaskProdVo"/>
+        where qr_code = #{qrCode}
+    </select>
+
+    <select id="selectTrialTaskProdWithoutQrCode" resultMap="TrialTaskProdResult">
+        <include refid="selectTrialTaskProdVo"/>
+        where qr_code IS NULL OR qr_code = ''
     </select>
 </mapper>
