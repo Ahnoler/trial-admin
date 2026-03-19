@@ -1,6 +1,7 @@
 package com.ruoyi.trial.service;
 
 import java.util.List;
+import java.util.Map;
 import com.ruoyi.trial.domain.TrialTaskProd;
 import net.sf.jasperreports.engine.JRException;
 
@@ -117,6 +118,16 @@ public interface ITrialTaskProdService
      * @throws Exception 异常
      */
     public void printTrialTaskProd(Long id, Long printType, String userId, HttpServletResponse response) throws Exception;
+
+    /**
+     * 准备打印数据
+     * 
+     * @param id 任务ID
+     * @param printType 打印类型
+     * @param userId 用户ID
+     * @return 打印数据模型
+     */
+    public Map<String, Object> preparePrintData(Long id, Long printType, String userId);
 
     /**
      * 根据二维码标识查询零件流转卡

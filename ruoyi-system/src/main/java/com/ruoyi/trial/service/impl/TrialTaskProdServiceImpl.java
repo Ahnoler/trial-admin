@@ -384,26 +384,11 @@ public class TrialTaskProdServiceImpl implements ITrialTaskProdService {
     }
 
     @Override
-    public void printTrialTaskProd(Long id, Long printType, String userId, HttpServletResponse response) throws Exception {
+    public Map<String, Object> preparePrintData(Long id, Long printType, String userId) {
+        Map<String, Object> model = new HashMap<>();
+        
         TrialTaskProd task = selectTrialTaskProdByTaskId(id);
-        if (task == null) {
-            response.setContentType("text/html; charset=UTF-8");
-            java.io.PrintWriter out = response.getWriter();
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<meta charset='UTF-8'>");
-            out.println("<title>纸质流转卡打印</title>");
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<div style='text-align: center; margin-top: 80px; font-size: 18px; color: #f56c6c;'>");
-            out.println("<h2>未找到对应任务</h2>");
-            out.println("<p>请检查任务ID是否正确，或联系管理员</p>");
-            out.println("</div>");
-            out.println("</body></html>");
-            return;
-        }
-
-        // 记录打印日志
+        
         com.ruoyi.trial.domain.PrintLog printLog = new com.ruoyi.trial.domain.PrintLog();
         printLog.setTaskId(id);
         printLog.setPrinttype(printType);
@@ -411,37 +396,96 @@ public class TrialTaskProdServiceImpl implements ITrialTaskProdService {
         printLog.setCreateTime(new java.util.Date());
         printLog.setStatus("1");
         printLogService.insertPrintLog(printLog);
+        
+        if (task == null) {
+            Map<String, String> error = new HashMap<>();
+            error.put("title", "未找到对应任务");
+            error.put("message", "请检查任务ID是否正确，或联系管理员");
+            model.put("error", error);
+        } else {
+            model.put("task", task);
+            model.put("printTypeDesc", getPrintTypeDesc(printType));
+            
+            com.ruoyi.trial.domain.TrialTaskDetailProd detail = new com.ruoyi.trial.domain.TrialTaskDetailProd();
+            detail.setTaskId(id);
+            List<com.ruoyi.trial.domain.TrialTaskDetailProd> details = trialTaskDetailProdMapper.selectTrialTaskDetailProdList(detail);
+            model.put("details", details);
+        }
+        
+        return model;
+    }
+    
+    private String getPrintTypeDesc(Long printType) {
+        if (printType == 2) {
+            return "丢失补打";
+        } else if (printType == 3) {
+            return "分流打印";
+        }
+        return "正常打印";
+    }
 
+    @Override
+    public void printTrialTaskProd(Long id, Long printType, String userId, HttpServletResponse response) throws Exception {
+        Map<String, Object> model = preparePrintData(id, printType, userId);
+        
+        if (model.containsKey("error")) {
+            response.setContentType("text/html; charset=UTF-8");
+            java.io.PrintWriter out = response.getWriter();
+            out.println("<!DOCTYPE html>");
+            out.println("<html>");
+            out.println("<head>");
+            out.println("<meta charset='UTF-8'>");
+            out.println("<title>纸质流转卡打印</title>");
+            out.println("<style>");
+            out.println("body { font-family: 'Microsoft YaHei', Arial, sans-serif; margin: 0; padding: 20px; }");
+            out.println(".error-container { text-align: center; margin-top: 80px; font-size: 18px; color: #f56c6c; }");
+            out.println(".error-container h2 { color: #f56c6c; }");
+            out.println("</style>");
+            out.println("</head>");
+            out.println("<body>");
+            out.println("<div class='error-container'>");
+            @SuppressWarnings("unchecked")
+            Map<String, String> error = (Map<String, String>) model.get("error");
+            out.println("<h2>" + error.get("title") + "</h2>");
+            out.println("<p>" + error.get("message") + "</p>");
+            out.println("</div>");
+            out.println("</body></html>");
+            return;
+        }
+        
         response.setContentType("text/html; charset=UTF-8");
         java.io.PrintWriter out = response.getWriter();
+        
+        out.println("<!DOCTYPE html>");
         out.println("<html>");
         out.println("<head>");
         out.println("<meta charset='UTF-8'>");
         out.println("<title>纸质流转卡打印</title>");
         out.println("<style>");
+        out.println("body { font-family: 'Microsoft YaHei', Arial, sans-serif; margin: 0; padding: 20px; }");
         out.println("table { width: 100%; border-collapse: collapse; margin: 20px 0; }");
         out.println("th, td { border: 1px solid #000; padding: 8px; text-align: left; }");
-        out.println("th { background-color: #f2f2f2; }");
-        out.println("h1, h2, h3 { text-align: center; }");
+        out.println("th { background-color: #f2f2f2; font-weight: bold; }");
+        out.println("h1, h2, h3 { text-align: center; margin: 10px 0; }");
         out.println(".page-break { page-break-after: always; }");
-        out.println(".print-type { text-align: right; margin-bottom: 10px; font-weight: bold; }");
+        out.println(".print-type { text-align: right; margin-bottom: 10px; font-weight: bold; font-size: 14px; }");
+        out.println(".info-table { margin-bottom: 30px; }");
+        out.println(".detail-table th { background-color: #e8e8e8; }");
         out.println("</style>");
         out.println("</head>");
         out.println("<body>");
-
-        // 打印类型显示
-        String printTypeDesc = "正常打印";
-        if (printType == 2) {
-            printTypeDesc = "丢失补打";
-        } else if (printType == 3) {
-            printTypeDesc = "分流打印";
-        }
+        
+        TrialTaskProd task = (TrialTaskProd) model.get("task");
+        String printTypeDesc = (String) model.get("printTypeDesc");
+        @SuppressWarnings("unchecked")
+        List<com.ruoyi.trial.domain.TrialTaskDetailProd> details = 
+            (List<com.ruoyi.trial.domain.TrialTaskDetailProd>) model.get("details");
+        
         out.println("<div class='print-type'>打印类型：" + printTypeDesc + "</div>");
-
         out.println("<h1>零件电子流转卡</h1>");
         out.println("<h2>任务名称：" + task.getTitle() + "</h2>");
-        out.println("<table border='1' cellpadding='5' cellspacing='0'>");
-        out.println("<tr><td>任务编号</td><td>" + task.getTaskId() + "</td></tr>");
+        out.println("<table class='info-table' border='1' cellpadding='5' cellspacing='0'>");
+        out.println("<tr><td width='150'>任务编号</td><td>" + task.getTaskId() + "</td></tr>");
         out.println("<tr><td>所属项目</td><td>" + task.getProjectName() + "</td></tr>");
         out.println("<tr><td>车型</td><td>" + task.getCarType() + "</td></tr>");
         out.println("<tr><td>总成名称</td><td>" + task.getAssemblyName() + "</td></tr>");
@@ -449,39 +493,63 @@ public class TrialTaskProdServiceImpl implements ITrialTaskProdService {
         out.println("<tr><td>试制管理员</td><td>" + task.getPm() + "</td></tr>");
         out.println("<tr><td>PE姓名</td><td>" + task.getPe() + "</td></tr>");
         out.println("<tr><td>当前程序</td><td>" + task.getCurrentSerialName() + "</td></tr>");
-        out.println("<tr><td>状态</td><td>" + ("0".equals(task.getStatus()) ? "正常" : "停用") + "</td></tr>");
-        out.println("<tr><td>二维码</td><td><img src='" + task.getQrCodeUrl() + "' width='100' height='100' style='vertical-align: middle;'/></td></tr>");
+        
+        String statusText = "0".equals(task.getStatus()) ? "正常" : ("2".equals(task.getStatus()) ? "已结束" : "停用");
+        out.println("<tr><td>状态</td><td>" + statusText + "</td></tr>");
+        
+        out.println("<tr><td>二维码</td><td>");
+        if (task.getQrCodeUrl() != null && !task.getQrCodeUrl().isEmpty()) {
+            out.println("<img src='" + task.getQrCodeUrl() + "' width='100' height='100' style='vertical-align: middle;'/>");
+        } else {
+            out.println("暂无二维码");
+        }
+        out.println("</td></tr>");
         out.println("</table>");
-
-        // 打印流转程序详情
-
+        
         out.println("<div style='page-break-before: always;'></div>");
         out.println("<h3>流转程序详情：</h3>");
-        out.println("<table border='1' cellpadding='5' cellspacing='0'>");
-        out.println("<tr><th>序号</th><th>程序<br>名称</th><th>名称</th><th>图号</th><th>试制<br>数量</th><th>送检<br>数量</th><th>制造<br>质量<br>确认</th><th>工艺<br>质量<br>确认</th><th>制造<br>区域</th><th>负责人</th><th>备注</th></tr>");
-
-        // 查询任务详情
-        com.ruoyi.trial.domain.TrialTaskDetailProd detail = new com.ruoyi.trial.domain.TrialTaskDetailProd();
-        detail.setTaskId(id);
-        List<com.ruoyi.trial.domain.TrialTaskDetailProd> details = trialTaskDetailProdMapper.selectTrialTaskDetailProdList(detail);
-        for (int i = 0; i < details.size(); i++) {
-            com.ruoyi.trial.domain.TrialTaskDetailProd d = details.get(i);
-            out.println("<tr>");
-            out.println("<td>" + (i + 1) + "</td>");
-            out.println("<td>" + d.getProgram() + "</td>");
-            out.println("<td>" + d.getName() + "</td>");
-            out.println("<td>" + d.getFigure() + "</td>");
-            out.println("<td>" + d.getTrialQuantity() + "</td>");
-            out.println("<td>" + d.getInspectionQuantity() + "</td>");
-            out.println("<td>" + d.getManufacturingQualityStatus() + "</td>");
-            out.println("<td>" + d.getProcessQualityStatus() + "</td>");
-            out.println("<td>" + d.getManufacturingArea() + "</td>");
-            out.println("<td>" + d.getDirector() + "</td>");
-            out.println("<td>" + d.getNotes() + "</td>");
-            out.println("</tr>");
+        out.println("<table class='detail-table' border='1' cellpadding='5' cellspacing='0'>");
+        out.println("<thead>");
+        out.println("<tr>");
+        out.println("<th width='50'>序号</th>");
+        out.println("<th width='80'>程序<br>名称</th>");
+        out.println("<th width='120'>名称</th>");
+        out.println("<th width='100'>图号</th>");
+        out.println("<th width='60'>试制<br>数量</th>");
+        out.println("<th width='60'>送检<br>数量</th>");
+        out.println("<th width='80'>制造<br>质量<br>确认</th>");
+        out.println("<th width='80'>工艺<br>质量<br>确认</th>");
+        out.println("<th width='80'>制造<br>区域</th>");
+        out.println("<th width='80'>负责人</th>");
+        out.println("<th width='120'>备注</th>");
+        out.println("</tr>");
+        out.println("</thead>");
+        out.println("<tbody>");
+        
+        if (details != null && !details.isEmpty()) {
+            for (int i = 0; i < details.size(); i++) {
+                com.ruoyi.trial.domain.TrialTaskDetailProd d = details.get(i);
+                out.println("<tr>");
+                out.println("<td style='text-align: center;'>" + (i + 1) + "</td>");
+                out.println("<td>" + (d.getProgram() != null ? d.getProgram() : "") + "</td>");
+                out.println("<td>" + (d.getName() != null ? d.getName() : "") + "</td>");
+                out.println("<td>" + (d.getFigure() != null ? d.getFigure() : "") + "</td>");
+                out.println("<td style='text-align: center;'>" + (d.getTrialQuantity() != null ? d.getTrialQuantity() : "") + "</td>");
+                out.println("<td style='text-align: center;'>" + (d.getInspectionQuantity() != null ? d.getInspectionQuantity() : "") + "</td>");
+                out.println("<td>" + (d.getManufacturingQualityStatus() != null ? d.getManufacturingQualityStatus() : "") + "</td>");
+                out.println("<td>" + (d.getProcessQualityStatus() != null ? d.getProcessQualityStatus() : "") + "</td>");
+                out.println("<td>" + (d.getManufacturingArea() != null ? d.getManufacturingArea() : "") + "</td>");
+                out.println("<td>" + (d.getDirector() != null ? d.getDirector() : "") + "</td>");
+                out.println("<td>" + (d.getNotes() != null ? d.getNotes() : "") + "</td>");
+                out.println("</tr>");
+            }
+        } else {
+            out.println("<tr><td colspan='11' style='text-align: center; color: #999;'>暂无流转程序详情</td></tr>");
         }
+        
+        out.println("</tbody>");
         out.println("</table>");
-
+        
         out.println("<script>window.onload = function() { window.print(); }</script>");
         out.println("</body></html>");
     }

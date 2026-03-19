@@ -55,6 +55,13 @@ spring:
     basename: i18n/messages
   profiles:
     active: druid
+  # Thymeleaf配置
+  thymeleaf:
+    prefix: classpath:/templates/
+    suffix: .html
+    mode: HTML
+    encoding: UTF-8
+    cache: false
   # 文件上传
   servlet:
     multipart:

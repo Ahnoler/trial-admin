@@ -1,6 +1,7 @@
 package com.ruoyi.web.controller.trial;
 
 import java.util.List;
+import java.util.Map;
 import javax.servlet.http.HttpServletResponse;
 
 import com.ruoyi.common.core.domain.model.LoginUser;
@@ -13,6 +14,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
@@ -158,11 +160,18 @@ public class TrialTaskProdController extends BaseController {
 
     @GetMapping("/printDetail/{id}")
     @PreAuthorize("@ss.hasPermi('trial:prod:print')")
-    @ApiOperation(value = "打印零件流转卡详细信息为pdf")
-    public void print(@PathVariable Long id, @RequestParam(required = false, defaultValue = "1") Long printType, HttpServletResponse response) throws Exception {
+    @ApiOperation(value = "打印零件流转卡详细信息")
+    public ModelAndView print(@PathVariable Long id, 
+                        @RequestParam(required = false, defaultValue = "1") Long printType) throws Exception {
         LoginUser loginUser = tokenService.getLoginUser(ServletUtils.getRequest());
         String userId = loginUser.getUser().getUserId().toString();
-        trialTaskProdService.printTrialTaskProd(id, printType, userId, response);
+        
+        Map<String, Object> printData = trialTaskProdService.preparePrintData(id, printType, userId);
+        
+        ModelAndView modelAndView = new ModelAndView("print-trial-task");
+        modelAndView.addAllObjects(printData);
+        
+        return modelAndView;
     }
 
     @GetMapping("/scan/{qrCode}")

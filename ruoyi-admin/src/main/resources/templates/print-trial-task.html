@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>纸质流转卡打印</title>
+    <style>
+        body {
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th, td {
+            border: 1px solid #000;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+        h1, h2, h3 {
+            text-align: center;
+            margin: 10px 0;
+        }
+        .page-break {
+            page-break-after: always;
+        }
+        .print-type {
+            text-align: right;
+            margin-bottom: 10px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        .error-container {
+            text-align: center;
+            margin-top: 80px;
+            font-size: 18px;
+            color: #f56c6c;
+        }
+        .error-container h2 {
+            color: #f56c6c;
+        }
+        .info-table {
+            margin-bottom: 30px;
+        }
+        .detail-table th {
+            background-color: #e8e8e8;
+        }
+        
+        /* 打印样式 */
+        @media print {
+            @page {
+                size: landscape;
+                margin: 10mm;
+            }
+            
+            body {
+                margin: 0;
+                padding: 0;
+            }
+            
+            .detail-table {
+                font-size: 12px;
+            }
+            
+            .detail-table th,
+            .detail-table td {
+                padding: 6px 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 错误提示 -->
+    <div th:if="${error}" class="error-container">
+        <h2 th:text="${error.title}">错误标题</h2>
+        <p th:text="${error.message}">错误消息</p>
+    </div>
+    
+    <!-- 正常打印内容 -->
+    <div th:unless="${error}">
+        <div class="print-type">
+            打印类型：<span th:text="${printTypeDesc}">正常打印</span>
+        </div>
+        
+        <h1>零件电子流转卡</h1>
+        <h2>任务名称：<span th:text="${task.title}">任务名称</span></h2>
+        
+        <table class="info-table" border="1" cellpadding="5" cellspacing="0">
+            <tr>
+                <td width="150">任务编号</td>
+                <td th:text="${task.taskId}">任务编号</td>
+            </tr>
+            <tr>
+                <td>所属项目</td>
+                <td th:text="${task.projectName}">项目名称</td>
+            </tr>
+            <tr>
+                <td>车型</td>
+                <td th:text="${task.carType}">车型</td>
+            </tr>
+            <tr>
+                <td>总成名称</td>
+                <td th:text="${task.assemblyName}">总成名称</td>
+            </tr>
+            <tr>
+                <td>总成图号</td>
+                <td th:text="${task.assemblyFigure}">总成图号</td>
+            </tr>
+            <tr>
+                <td>试制管理员</td>
+                <td th:text="${task.pm}">试制管理员</td>
+            </tr>
+            <tr>
+                <td>PE姓名</td>
+                <td th:text="${task.pe}">PE姓名</td>
+            </tr>
+            <tr>
+                <td>当前程序</td>
+                <td th:text="${task.currentSerialName}">当前程序</td>
+            </tr>
+            <tr>
+                <td>状态</td>
+                <td th:text="${task.status == '0' ? '正常' : (task.status == '2' ? '已结束' : '停用')}">状态</td>
+            </tr>
+            <tr>
+                <td>二维码</td>
+                <td>
+                    <img th:if="${task.qrCodeUrl != null and task.qrCodeUrl != ''}" 
+                         th:src="${task.qrCodeUrl}" 
+                         width="100" 
+                         height="100" 
+                         style="vertical-align: middle;"/>
+                    <span th:if="${task.qrCodeUrl == null or task.qrCodeUrl == ''}">暂无二维码</span>
+                </td>
+            </tr>
+        </table>
+        
+        <div style="page-break-before: always;"></div>
+        <h3>流转程序详情：</h3>
+        <table class="detail-table" border="1" cellpadding="5" cellspacing="0">
+            <thead>
+                <tr>
+                    <th width="50">序号</th>
+                    <th width="80">程序<br>名称</th>
+                    <th width="120">名称</th>
+                    <th width="100">图号</th>
+                    <th width="60">试制<br>数量</th>
+                    <th width="60">送检<br>数量</th>
+                    <th width="80">制造<br>质量<br>确认</th>
+                    <th width="80">工艺<br>质量<br>确认</th>
+                    <th width="80">制造<br>区域</th>
+                    <th width="80">负责人</th>
+                    <th width="120">备注</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="detail, stat : ${details}">
+                    <td style="text-align: center;" th:text="${stat.count}">1</td>
+                    <td th:text="${detail.program}">程序名称</td>
+                    <td th:text="${detail.name}">名称</td>
+                    <td th:text="${detail.figure}">图号</td>
+                    <td style="text-align: center;" th:text="${detail.trialQuantity}">试制数量</td>
+                    <td style="text-align: center;" th:text="${detail.inspectionQuantity}">送检数量</td>
+                    <td th:text="${detail.manufacturingQualityStatus}">制造质量确认</td>
+                    <td th:text="${detail.processQualityStatus}">工艺质量确认</td>
+                    <td th:text="${detail.manufacturingArea}">制造区域</td>
+                    <td th:text="${detail.director}">负责人</td>
+                    <td th:text="${detail.notes}">备注</td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <div th:if="${#lists.isEmpty(details)}" style="text-align: center; margin-top: 20px; color: #999;">
+            <p>暂无流转程序详情</p>
+        </div>
+    </div>
+    
+    <script>
+        window.onload = function() { 
+            window.print(); 
+        }
+    </script>
+</body>
+</html>
