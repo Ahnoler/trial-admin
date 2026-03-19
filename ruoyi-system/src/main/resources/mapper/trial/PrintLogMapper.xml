@@ -29,10 +29,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="taskId != null "> and task_id = #{taskId}</if>
             <if test="content != null  and content != ''"> and content = #{content}</if>
             <if test="cardtype != null "> and cardtype = #{cardtype}</if>
-            <if test="orgnno != null "> and orgnno = #{orgnno}</if>
-            <if test="printtype != null "> and printtype = #{printtype}</if>
+            <if test="orgnno != null"> and orgnno = #{orgnno}</if>
+            <if test="printtype != null"> and printtype = #{printtype}</if>
             <if test="status != null  and status != ''"> and status = #{status}</if>
         </where>
+        order by create_time desc
     </select>
     
     <select id="selectPrintLogById" parameterType="Long" resultMap="PrintLogResult">

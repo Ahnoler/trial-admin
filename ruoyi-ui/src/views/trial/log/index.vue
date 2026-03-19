@@ -134,6 +134,32 @@
 
     <!-- 查看详情弹窗 -->
     <el-dialog title="打印内容详情" :visible.sync="detailOpen" width="90%" append-to-body>
+      <!-- 基本信息 -->
+      <div class="info-section" v-if="detailMap">
+        <div class="info-row">
+          <div class="info-item">
+            <span class="info-label">车型：</span>
+            <span class="info-value">{{ detailMap.carType }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">PE</span>
+            <span class="info-value">{{ detailMap.PE }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">试制管理员</span>
+            <span class="info-value">{{ detailMap.trial_production }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">总成名称</span>
+            <span class="info-value">{{ detailMap.assembly_name }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">总成图号</span>
+            <span class="info-value">{{ detailMap.assembly_drawing_number }}</span>
+          </div>
+        </div>
+      </div>
+      <!-- 流转程序详情 -->
       <div v-for="(group, groupIndex) in detailData" :key="groupIndex" class="detail-group">
         <h4 class="group-title">环节 {{ group.left_index }}</h4>
         <el-table :data="group.listInfo" border size="small" style="margin-bottom: 20px;">
@@ -189,6 +215,8 @@ export default {
       detailOpen: false,
       // 详情数据
       detailData: [],
+      // 详情Map信息
+      detailMap: null,
       // 查询参数
       queryParams: {
         pageNum: 1,
@@ -255,9 +283,9 @@ export default {
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
-      this.ids = selection.map(item => item.id)
-      this.single = selection.length!==1
-      this.multiple = !selection.length
+      this.ids = selection.map(item => item.id);
+      this.single = selection.length !== 1;
+      this.multiple = !selection.length;
     },
     /** 新增按钮操作 */
     handleAdd() {
@@ -268,7 +296,7 @@ export default {
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
-      const id = row.id || this.ids
+      const id = row.id || this.ids[0];
       getLog(id).then(response => {
         this.form = response.data;
         this.open = true;
@@ -298,7 +326,7 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const ids = row.id || this.ids;
-      this.$modal.confirm('是否确认删除 打印记录编号为"' + ids + '"的数据项？').then(function() {
+      this.$modal.confirm('是否确认删除打印记录编号为"' + ids + '"的数据项？').then(function() {
         return delLog(ids);
       }).then(() => {
         this.getList();
@@ -314,9 +342,16 @@ export default {
     /** 查看详情 */
     handleViewDetail(row) {
       this.detailData = [];
+      this.detailMap = null;
       if (row.content) {
         try {
-          this.detailData = JSON.parse(row.content);
+          const parsed = JSON.parse(row.content);
+          if (parsed.list) {
+            this.detailData = parsed.list;
+          }
+          if (parsed.map) {
+            this.detailMap = parsed.map;
+          }
         } catch (e) {
           this.$modal.msgError("打印内容格式错误，无法解析");
         }
@@ -338,5 +373,29 @@ export default {
   border-left: 3px solid #409EFF;
   font-size: 14px;
   color: #303133;
+}
+.info-section {
+  background-color: #f5f7fa;
+  padding: 15px;
+  margin-bottom: 20px;
+  border-radius: 4px;
+}
+.info-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+.info-item {
+  flex: 1;
+  min-width: 200px;
+}
+.info-label {
+  color: #909399;
+  font-size: 13px;
+  margin-right: 8px;
+}
+.info-value {
+  color: #303133;
+  font-size: 14px;
 }
 </style>

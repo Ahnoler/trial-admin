@@ -2,10 +2,7 @@ package com.ruoyi.trial.service.impl;
 
 import java.io.InputStream;
 import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import com.alibaba.fastjson2.JSONArray;
 import com.ruoyi.common.utils.DateUtils;
@@ -13,6 +10,7 @@ import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.QRCodeUtil;
 import com.ruoyi.common.utils.uuid.UUID;
 import com.ruoyi.common.entity.ActionLog;
+import com.ruoyi.trial.domain.PrintLog;
 import org.springframework.beans.BeanUtils;
 import com.ruoyi.trial.domain.CardModelDetailProd;
 import com.ruoyi.trial.domain.DTO.TrialTaskDetailProdPdfDTO;
@@ -389,14 +387,27 @@ public class TrialTaskProdServiceImpl implements ITrialTaskProdService {
         
         TrialTaskProd task = selectTrialTaskProdByTaskId(id);
         
-        com.ruoyi.trial.domain.PrintLog printLog = new com.ruoyi.trial.domain.PrintLog();
+        TrialTaskDetailProd detailQuery = new TrialTaskDetailProd();
+        detailQuery.setTaskId(id);
+        List<TrialTaskDetailProd> details = trialTaskDetailProdMapper.selectTrialTaskDetailProdList(detailQuery);
+        
+        PrintLog printLog = new PrintLog();
         printLog.setTaskId(id);
         printLog.setPrinttype(printType);
         printLog.setCreateBy(userId);
-        printLog.setCreateTime(new java.util.Date());
+        printLog.setCreateTime(new Date());
         printLog.setStatus("1");
-        printLogService.insertPrintLog(printLog);
         
+        if (task != null && details != null && !details.isEmpty()) {
+            try {
+                String contentJson = buildPrintContentJson(task, details);
+                printLog.setContent(contentJson);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        printLogService.insertPrintLog(printLog);
+
         if (task == null) {
             Map<String, String> error = new HashMap<>();
             error.put("title", "未找到对应任务");
@@ -405,14 +416,58 @@ public class TrialTaskProdServiceImpl implements ITrialTaskProdService {
         } else {
             model.put("task", task);
             model.put("printTypeDesc", getPrintTypeDesc(printType));
-            
-            com.ruoyi.trial.domain.TrialTaskDetailProd detail = new com.ruoyi.trial.domain.TrialTaskDetailProd();
-            detail.setTaskId(id);
-            List<com.ruoyi.trial.domain.TrialTaskDetailProd> details = trialTaskDetailProdMapper.selectTrialTaskDetailProdList(detail);
             model.put("details", details);
         }
         
         return model;
+    }
+    
+    private String buildPrintContentJson(TrialTaskProd task, List<TrialTaskDetailProd> details) {
+        com.alibaba.fastjson2.JSONObject result = new com.alibaba.fastjson2.JSONObject();
+        
+        java.util.Map<Integer, com.alibaba.fastjson2.JSONArray> groupMap = new java.util.TreeMap<>();
+        for (TrialTaskDetailProd detail : details) {
+            Integer leftIndex = detail.getSerialNo() / 100;
+            if (leftIndex == null) leftIndex = 1;
+            
+            com.alibaba.fastjson2.JSONObject item = new com.alibaba.fastjson2.JSONObject();
+            item.put("index", detail.getSerialNo() != null ? detail.getSerialNo().toString() : "1");
+            item.put("procedure", detail.getProgram() != null ? detail.getProgram() : "");
+            item.put("name", detail.getName() != null ? detail.getName() : "");
+            item.put("drawing_no", detail.getFigure() != null ? detail.getFigure() : "");
+            item.put("trial_num", detail.getTrialQuantity() != null ? detail.getTrialQuantity().toString() : "");
+            item.put("inspection_num", detail.getInspectionQuantity() != null ? detail.getInspectionQuantity().toString() : "");
+            item.put("area", detail.getManufacturingArea() != null ? detail.getManufacturingArea() : "");
+            item.put("head", detail.getDirector() != null ? detail.getDirector() : "");
+            item.put("phone", detail.getDirectorTel() != null ? detail.getDirectorTel() : "");
+            item.put("me_name", detail.getMeDirector() != null ? detail.getMeDirector() : "");
+            item.put("telephone", detail.getMeDirectorTel() != null ? detail.getMeDirectorTel() : "");
+            
+            if (!groupMap.containsKey(leftIndex)) {
+                groupMap.put(leftIndex, new com.alibaba.fastjson2.JSONArray());
+            }
+            groupMap.get(leftIndex).add(item);
+        }
+        
+        com.alibaba.fastjson2.JSONArray listArray = new com.alibaba.fastjson2.JSONArray();
+        for (java.util.Map.Entry<Integer, com.alibaba.fastjson2.JSONArray> entry : groupMap.entrySet()) {
+            com.alibaba.fastjson2.JSONObject group = new com.alibaba.fastjson2.JSONObject();
+            group.put("left_index", entry.getKey().toString());
+            group.put("listInfo", entry.getValue());
+            listArray.add(group);
+        }
+        result.put("list", listArray);
+        
+        com.alibaba.fastjson2.JSONObject mapObj = new com.alibaba.fastjson2.JSONObject();
+        mapObj.put("carType", task.getCarType() != null ? task.getCarType() : "");
+        mapObj.put("PE", task.getPe() != null ? task.getPe() : "");
+        mapObj.put("trial_production", task.getPm() != null ? task.getPm() : "");
+        mapObj.put("assembly_name", task.getAssemblyName() != null ? task.getAssemblyName() : "");
+        mapObj.put("assembly_drawing_number", task.getAssemblyFigure() != null ? task.getAssemblyFigure() : "");
+        mapObj.put("contractCode", "");
+        result.put("map", mapObj);
+        
+        return result.toJSONString();
     }
     
     private String getPrintTypeDesc(Long printType) {
