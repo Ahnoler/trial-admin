@@ -1,37 +1,57 @@
 <template>
 	<div class="app-container">
-		<el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
-			<el-form-item label="所属项目" prop="projectName">
-				<el-input v-model="queryParams.projectName" placeholder="请输入项目名称" clearable @keyup.enter.native="handleQuery" />
-			</el-form-item>
-			<el-form-item label="卡片名称" prop="title">
-				<el-input v-model="queryParams.title" placeholder="请输入卡片名称" clearable @keyup.enter.native="handleQuery" />
-			</el-form-item>
-			<el-form-item label="车型" prop="carType">
-				<el-select v-model="queryParams.carType" placeholder="请选择车型">
-					<el-option label="所用车型" value=""></el-option>
-					<el-option v-for="dict in dict.type.car_type" :key="dict.value" :label="dict.label"
-						:value="dict.value"></el-option>
-				</el-select>
-			</el-form-item>
-			<el-form-item label="总成名称" prop="assemblyName">
-				<el-input v-model="queryParams.assemblyName" placeholder="请输入总成名称" clearable
-					@keyup.enter.native="handleQuery" />
-			</el-form-item>
-			<el-form-item label="总成图号" prop="assemblyFigure">
-				<el-input v-model="queryParams.assemblyFigure" placeholder="请输入总成图号" clearable
-					@keyup.enter.native="handleQuery" />
-			</el-form-item>
-			<el-form-item label="试制管理员/电话" prop="pm">
-				<el-input v-model="queryParams.pm" placeholder="请输入试制管理员/电话" clearable @keyup.enter.native="handleQuery" />
-			</el-form-item>
-			<el-form-item label="PE姓名/电话" prop="pe">
-				<el-input v-model="queryParams.pe" placeholder="请输入PE姓名/电话" clearable @keyup.enter.native="handleQuery" />
-			</el-form-item>
-			<el-form-item>
-				<el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
-				<el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
-			</el-form-item>
+		<el-form :model="queryParams" ref="queryForm" size="small" v-show="showSearch" label-width="120px">
+			<el-row :gutter="10">
+				<el-col :span="4">
+					<el-form-item label="所属项目" prop="projectName">
+						<el-input v-model="queryParams.projectName" placeholder="请输入项目名称" clearable @keyup.enter.native="handleQuery" />
+					</el-form-item>
+				</el-col>
+				<el-col :span="4">
+					<el-form-item label="卡片名称" prop="title">
+						<el-input v-model="queryParams.title" placeholder="请输入卡片名称" clearable @keyup.enter.native="handleQuery" />
+					</el-form-item>
+				</el-col>
+				<el-col :span="4">
+					<el-form-item label="车型" prop="carType">
+						<el-select v-model="queryParams.carType" placeholder="请选择车型" style="width: 100%">
+							<el-option label="所用车型" value=""></el-option>
+							<el-option v-for="dict in dict.type.car_type" :key="dict.value" :label="dict.label"
+								:value="dict.value"></el-option>
+						</el-select>
+					</el-form-item>
+				</el-col>
+				<el-col :span="4">
+					<el-form-item label="总成名称" prop="assemblyName">
+						<el-input v-model="queryParams.assemblyName" placeholder="请输入总成名称" clearable
+							@keyup.enter.native="handleQuery" />
+					</el-form-item>
+				</el-col>
+				<el-col :span="4">
+					<el-form-item label="总成图号" prop="assemblyFigure">
+						<el-input v-model="queryParams.assemblyFigure" placeholder="请输入总成图号" clearable
+							@keyup.enter.native="handleQuery" />
+					</el-form-item>
+				</el-col>
+				<el-col :span="4">
+					<el-form-item label-width="0">
+						<el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
+						<el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
+					</el-form-item>
+				</el-col>
+			</el-row>
+			<el-row :gutter="10">
+				<el-col :span="8">
+					<el-form-item label="试制管理员/电话" prop="pm">
+						<el-input v-model="queryParams.pm" placeholder="请输入试制管理员/电话" clearable @keyup.enter.native="handleQuery" />
+					</el-form-item>
+				</el-col>
+				<el-col :span="8">
+					<el-form-item label="PE姓名/电话" prop="pe">
+						<el-input v-model="queryParams.pe" placeholder="请输入PE姓名/电话" clearable @keyup.enter.native="handleQuery" />
+					</el-form-item>
+				</el-col>
+			</el-row>
 		</el-form>
 
 		<el-row :gutter="10" class="mb8">

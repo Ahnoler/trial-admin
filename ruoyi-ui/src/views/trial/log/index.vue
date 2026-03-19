@@ -71,10 +71,13 @@
 
     <el-table v-loading="loading" :data="logList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="打印记录" align="center" prop="id" />
-      <el-table-column label=" 打印单据编号" align="center" prop="taskId" />
-      <el-table-column label=" 打印内容" align="center" prop="content" />
-      <el-table-column label=" 打印卡片类型" align="center" prop="cardtype" />
+      <el-table-column label="打印记录" align="center" prop="id">
+        <template slot-scope="scope">
+          <el-button type="text" @click="handleViewDetail(scope.row)">查看详情</el-button>
+        </template>
+      </el-table-column>
+      <el-table-column label="打印单据编号" align="center" prop="taskId" />
+      <el-table-column label="打印卡片类型" align="center" prop="cardtype" />
       <el-table-column label="机构编号" align="center" prop="orgnno" />
       <el-table-column label="打印类型" align="center" prop="printtype" />
       <el-table-column label="状态" align="center" prop="status" />
@@ -128,6 +131,32 @@
         <el-button @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
+
+    <!-- 查看详情弹窗 -->
+    <el-dialog title="打印内容详情" :visible.sync="detailOpen" width="90%" append-to-body>
+      <div v-for="(group, groupIndex) in detailData" :key="groupIndex" class="detail-group">
+        <h4 class="group-title">环节 {{ group.left_index }}</h4>
+        <el-table :data="group.listInfo" border size="small" style="margin-bottom: 20px;">
+          <el-table-column label="序号" align="center" prop="index" width="60" />
+          <el-table-column label="流转程序" align="center" prop="procedure" />
+          <el-table-column label="名称" align="center" prop="name" />
+          <el-table-column label="图号" align="center" prop="drawing_no" />
+          <el-table-column label="试制数量" align="center" prop="trial_num" />
+          <el-table-column label="送检数量" align="center" prop="inspection_num" />
+          <el-table-column label="制造区域" align="center" prop="area" />
+          <el-table-column label="负责人" align="center" prop="head" />
+          <el-table-column label="负责人电话" align="center" prop="phone" />
+          <el-table-column label="责任ME" align="center" prop="me_name" />
+          <el-table-column label="ME电话" align="center" prop="telephone" />
+        </el-table>
+      </div>
+      <div v-if="detailData.length === 0" style="text-align: center; color: #909399; padding: 20px;">
+        暂无打印内容
+      </div>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="detailOpen = false">关 闭</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -156,6 +185,10 @@ export default {
       title: "",
       // 是否显示弹出层
       open: false,
+      // 详情弹窗
+      detailOpen: false,
+      // 详情数据
+      detailData: [],
       // 查询参数
       queryParams: {
         pageNum: 1,
@@ -277,7 +310,33 @@ export default {
       this.download('trial/log/export', {
         ...this.queryParams
       }, `log_${new Date().getTime()}.xlsx`)
+    },
+    /** 查看详情 */
+    handleViewDetail(row) {
+      this.detailData = [];
+      if (row.content) {
+        try {
+          this.detailData = JSON.parse(row.content);
+        } catch (e) {
+          this.$modal.msgError("打印内容格式错误，无法解析");
+        }
+      }
+      this.detailOpen = true;
     }
   }
 };
 </script>
+
+<style scoped>
+.detail-group {
+  margin-bottom: 10px;
+}
+.group-title {
+  margin: 10px 0;
+  padding: 8px 12px;
+  background-color: #f5f7fa;
+  border-left: 3px solid #409EFF;
+  font-size: 14px;
+  color: #303133;
+}
+</style>
