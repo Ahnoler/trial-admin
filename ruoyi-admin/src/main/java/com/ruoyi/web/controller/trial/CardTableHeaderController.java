@@ -20,6 +20,8 @@ import com.ruoyi.trial.domain.CardTableHeader;
 import com.ruoyi.trial.service.ICardTableHeaderService;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.common.core.page.TableDataInfo;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 
 /**
  * 卡片头模版Controller
@@ -29,6 +31,7 @@ import com.ruoyi.common.core.page.TableDataInfo;
  */
 @RestController
 @RequestMapping("/card/header")
+@Api(tags = "卡片头模版")
 public class CardTableHeaderController extends BaseController
 {
     @Autowired
@@ -39,6 +42,7 @@ public class CardTableHeaderController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('card:header:list')")
     @GetMapping("/list")
+    @ApiOperation(value = "查询卡片头模版列表")
     public TableDataInfo list(CardTableHeader cardTableHeader)
     {
         startPage();
@@ -52,6 +56,7 @@ public class CardTableHeaderController extends BaseController
     @PreAuthorize("@ss.hasPermi('card:header:export')")
     @Log(title = "卡片头模版", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
+    @ApiOperation(value = "导出卡片头模版列表")
     public void export(HttpServletResponse response, CardTableHeader cardTableHeader)
     {
         List<CardTableHeader> list = cardTableHeaderService.selectCardTableHeaderList(cardTableHeader);
@@ -64,6 +69,7 @@ public class CardTableHeaderController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('card:header:query')")
     @GetMapping(value = "/{headerCode}")
+    @ApiOperation(value = "获取卡片头模版详细信息")
     public AjaxResult getInfo(@PathVariable("headerCode") Long headerCode)
     {
         return success(cardTableHeaderService.selectCardTableHeaderByHeaderCode(headerCode));
@@ -75,6 +81,7 @@ public class CardTableHeaderController extends BaseController
     @PreAuthorize("@ss.hasPermi('card:header:add')")
     @Log(title = "卡片头模版", businessType = BusinessType.INSERT)
     @PostMapping
+    @ApiOperation(value = "新增卡片头模版")
     public AjaxResult add(@RequestBody CardTableHeader cardTableHeader)
     {
         return toAjax(cardTableHeaderService.insertCardTableHeader(cardTableHeader));
@@ -86,6 +93,7 @@ public class CardTableHeaderController extends BaseController
     @PreAuthorize("@ss.hasPermi('card:header:edit')")
     @Log(title = "卡片头模版", businessType = BusinessType.UPDATE)
     @PutMapping
+    @ApiOperation(value = "修改卡片头模版")
     public AjaxResult edit(@RequestBody CardTableHeader cardTableHeader)
     {
         return toAjax(cardTableHeaderService.updateCardTableHeader(cardTableHeader));
@@ -97,6 +105,7 @@ public class CardTableHeaderController extends BaseController
     @PreAuthorize("@ss.hasPermi('card:header:remove')")
     @Log(title = "卡片头模版", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{headerCodes}")
+    @ApiOperation(value = "删除卡片头模版")
     public AjaxResult remove(@PathVariable Long[] headerCodes)
     {
         return toAjax(cardTableHeaderService.deleteCardTableHeaderByHeaderCodes(headerCodes));

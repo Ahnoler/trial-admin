@@ -8,8 +8,8 @@ import com.ruoyi.common.utils.ServletUtils;
 import com.ruoyi.common.utils.QRCodeUtil;
 import com.ruoyi.common.utils.uuid.UUID;
 import com.ruoyi.framework.web.service.TokenService;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -30,7 +30,7 @@ import com.ruoyi.common.core.page.TableDataInfo;
  */
 @RestController
 @RequestMapping("/trial/prod")
-@Tag(name = "试制任务-零件流转卡", description = "管理零件流转卡，以及零件流转卡的分流与当前流转程序变更")
+@Api(tags = "试制任务-零件流转卡")
 public class TrialTaskProdController extends BaseController {
     @Autowired
     private ITrialTaskProdService trialTaskProdService;
@@ -39,7 +39,7 @@ public class TrialTaskProdController extends BaseController {
     private TokenService tokenService;
 
     @PostMapping
-    @Operation(summary = "新增零件流转卡")
+    @ApiOperation(value = "新增零件流转卡")
     @PreAuthorize("@ss.hasPermi('trial:prod:add')")
     @Log(title = "试制任务信息", businessType = BusinessType.INSERT)
     public AjaxResult add(@RequestBody TrialTaskProd trialTaskProd) {
@@ -47,7 +47,7 @@ public class TrialTaskProdController extends BaseController {
     }
 
     @PutMapping
-    @Operation(summary = "修改零件流转卡")
+    @ApiOperation(value = "修改零件流转卡")
     @PreAuthorize("@ss.hasPermi('trial:prod:edit')")
     @Log(title = "试制任务信息", businessType = BusinessType.UPDATE)
     public AjaxResult edit(@RequestBody TrialTaskProd trialTaskProd) {
@@ -59,7 +59,7 @@ public class TrialTaskProdController extends BaseController {
     }
 
     @DeleteMapping("/{taskIds}")
-    @Operation(summary = "删除零件流转卡")
+    @ApiOperation(value = "删除零件流转卡")
     @PreAuthorize("@ss.hasPermi('trial:prod:remove')")
     @Log(title = "试制任务信息", businessType = BusinessType.DELETE)
     public AjaxResult remove(@PathVariable Long[] taskIds) {
@@ -67,14 +67,14 @@ public class TrialTaskProdController extends BaseController {
     }
 
     @GetMapping(value = "/{taskId}")
-    @Operation(summary = "获取零件流转卡详细信息")
+    @ApiOperation(value = "获取零件流转卡详细信息")
     @PreAuthorize("@ss.hasPermi('trial:prod:query')")
     public AjaxResult getInfo(@PathVariable("taskId") Long taskId) {
         return success(trialTaskProdService.selectTrialTaskProdByTaskId(taskId));
     }
 
     @GetMapping("/list")
-    @Operation(summary = "获取零件流转卡列表")
+    @ApiOperation(value = "获取零件流转卡列表")
     @PreAuthorize("@ss.hasPermi('trial:prod:list')")
     public TableDataInfo list(TrialTaskProd trialTaskProd) {
         startPage();
@@ -84,7 +84,7 @@ public class TrialTaskProdController extends BaseController {
 
     @PostMapping("/exportExcel")
     @PreAuthorize("@ss.hasPermi('trial:prod:export')")
-    @Operation(summary = "导出零件流转卡列表为Excel")
+    @ApiOperation(value = "导出零件流转卡列表为Excel")
     @Log(title = "试制任务信息", businessType = BusinessType.EXPORT)
     public void export(HttpServletResponse response, TrialTaskProd trialTaskProd) {
         List<TrialTaskProd> list = trialTaskProdService.selectTrialTaskProdList(trialTaskProd);
@@ -95,7 +95,7 @@ public class TrialTaskProdController extends BaseController {
     @PostMapping("/flow")
     @PreAuthorize("@ss.hasPermi('trial:prod:edit')")
     @Log(title = "试制任务信息", businessType = BusinessType.UPDATE)
-    @Operation(summary = "变更零件流转卡-流转程序", description = "将当前工序状态改为1-正在填报，向前是3-已审核，向后是0-未填报，2-已申请还没有做")
+    @ApiOperation(value = "变更零件流转卡-流转程序")
     public AjaxResult flow(@RequestBody TrialTaskProd trialTaskProd) {
         try {
             LoginUser loginUser = tokenService.getLoginUser(ServletUtils.getRequest());
@@ -109,7 +109,7 @@ public class TrialTaskProdController extends BaseController {
     @PostMapping("/fork")
     @PreAuthorize("@ss.hasPermi('trial:prod:edit')")
     @Log(title = "试制任务信息", businessType = BusinessType.UPDATE)
-    @Operation(summary = "零件流转卡分流操作", description = "为传进来的taskId和当前分流改动的工序列表 新建零件流转卡，并且设置关联id")
+    @ApiOperation(value = "零件流转卡分流操作")
     public AjaxResult change(@RequestBody TrialTaskProd trialTaskProd) {
         try {
             LoginUser loginUser = tokenService.getLoginUser(ServletUtils.getRequest());
@@ -123,7 +123,7 @@ public class TrialTaskProdController extends BaseController {
     @PostMapping("/over")
     @PreAuthorize("@ss.hasPermi('trial:prod:edit')")
     @Log(title = "试制任务信息", businessType = BusinessType.UPDATE)
-    @Operation(summary = "结束零件流转卡", description = "判断是否可以结束，由前端完成")
+    @ApiOperation(value = "结束零件流转卡")
     public AjaxResult over(@RequestBody TrialTaskProd trialTaskProd) {
         TrialTaskProd oldNode = trialTaskProdService.selectTrialTaskProdByTaskId(trialTaskProd.getTaskId());
         // 把任务置为结束状态
@@ -131,7 +131,7 @@ public class TrialTaskProdController extends BaseController {
         return toAjax(trialTaskProdService.updateTrialTaskProd(oldNode));
     }
 
-    @Operation(summary = "导出零件流转卡详细信息为pdf")
+    @ApiOperation(value = "导出零件流转卡详细信息为pdf")
     @PreAuthorize("@ss.hasPermi('trial:projects:export')")
     @Log(title = "试制任务信息", businessType = BusinessType.EXPORT)
     @GetMapping(value = "/exportPdf/{id}", produces = "application/pdf")
@@ -141,7 +141,7 @@ public class TrialTaskProdController extends BaseController {
 
     @GetMapping("/related/{relatedTaskId}")
     @PreAuthorize("@ss.hasPermi('trial:prod:list')")
-    @Operation(summary = "根据关联任务ID查询相关的零件流转卡列表", description = "单次查询操作交由前端完成")
+    @ApiOperation(value = "根据关联任务ID查询相关的零件流转卡列表")
     public TableDataInfo selectByRelatedTaskId(@PathVariable("relatedTaskId") Long relatedTaskId) {
         startPage();
         List<TrialTaskProd> list = trialTaskProdService.selectTrialTaskProdByRelatedTaskId(relatedTaskId);
@@ -150,7 +150,7 @@ public class TrialTaskProdController extends BaseController {
 
     @GetMapping("/printDetail/{id}")
     @PreAuthorize("@ss.hasPermi('trial:prod:print')")
-    @Operation(summary = "打印零件流转卡详细信息为pdf", description = "在网页上完成打印")
+    @ApiOperation(value = "打印零件流转卡详细信息为pdf")
     public void print(@PathVariable Long id, @RequestParam(required = false, defaultValue = "1") Long printType, HttpServletResponse response) throws Exception {
         LoginUser loginUser = tokenService.getLoginUser(ServletUtils.getRequest());
         String userId = loginUser.getUser().getUserId().toString();
@@ -158,7 +158,7 @@ public class TrialTaskProdController extends BaseController {
     }
 
     @GetMapping("/scan/{qrCode}")
-    @Operation(summary = "扫码识别-根据二维码获取流转卡信息", description = "小程序端扫描二维码后调用此接口获取流转卡详情")
+    @ApiOperation(value = "扫码识别-根据二维码获取流转卡信息")
     public AjaxResult scanQrCode(@PathVariable("qrCode") String qrCode) {
         TrialTaskProd task = trialTaskProdService.selectTrialTaskProdByQrCode(qrCode);
         if (task == null) {
@@ -172,7 +172,7 @@ public class TrialTaskProdController extends BaseController {
 
     @PostMapping("/regenerateQrCode/{taskId}")
     @PreAuthorize("@ss.hasPermi('trial:prod:edit')")
-    @Operation(summary = "重新生成二维码", description = "为指定流转卡重新生成二维码")
+    @ApiOperation(value = "重新生成二维码")
     public AjaxResult regenerateQrCode(@PathVariable Long taskId) {
         TrialTaskProd task = trialTaskProdService.selectTrialTaskProdByTaskId(taskId);
         if (task == null) {
@@ -187,7 +187,7 @@ public class TrialTaskProdController extends BaseController {
 
     @PostMapping("/batchGenerateQrCode")
     @PreAuthorize("@ss.hasPermi('trial:prod:edit')")
-    @Operation(summary = "批量生成二维码", description = "为所有没有二维码的流转卡批量生成二维码")
+    @ApiOperation(value = "批量生成二维码")
     public AjaxResult batchGenerateQrCode() {
         int count = trialTaskProdService.batchGenerateQrCode();
         return AjaxResult.success("成功为 " + count + " 个流转卡生成二维码");

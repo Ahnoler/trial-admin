@@ -20,6 +20,8 @@ import com.ruoyi.trial.domain.CardType;
 import com.ruoyi.trial.service.ICardTypeService;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.common.core.page.TableDataInfo;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 
 /**
  * 卡片类型Controller
@@ -29,6 +31,7 @@ import com.ruoyi.common.core.page.TableDataInfo;
  */
 @RestController
 @RequestMapping("/card/type")
+@Api(tags = "卡片类型")
 public class CardTypeController extends BaseController
 {
     @Autowired
@@ -39,6 +42,7 @@ public class CardTypeController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('card:type:list')")
     @GetMapping("/list")
+    @ApiOperation(value = "查询卡片类型列表")
     public TableDataInfo list(CardType cardType)
     {
         startPage();
@@ -52,6 +56,7 @@ public class CardTypeController extends BaseController
     @PreAuthorize("@ss.hasPermi('card:type:export')")
     @Log(title = "卡片类型", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
+    @ApiOperation(value = "导出卡片类型列表")
     public void export(HttpServletResponse response, CardType cardType)
     {
         List<CardType> list = cardTypeService.selectCardTypeList(cardType);
@@ -64,6 +69,7 @@ public class CardTypeController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('card:type:query')")
     @GetMapping(value = "/{cardId}")
+    @ApiOperation(value = "获取卡片类型详细信息")
     public AjaxResult getInfo(@PathVariable("cardId") Long cardId)
     {
         return success(cardTypeService.selectCardTypeByCardId(cardId));
@@ -75,6 +81,7 @@ public class CardTypeController extends BaseController
     @PreAuthorize("@ss.hasPermi('card:type:add')")
     @Log(title = "卡片类型", businessType = BusinessType.INSERT)
     @PostMapping
+    @ApiOperation(value = "新增卡片类型")
     public AjaxResult add(@RequestBody CardType cardType)
     {
         return toAjax(cardTypeService.insertCardType(cardType));
@@ -86,6 +93,7 @@ public class CardTypeController extends BaseController
     @PreAuthorize("@ss.hasPermi('card:type:edit')")
     @Log(title = "卡片类型", businessType = BusinessType.UPDATE)
     @PutMapping
+    @ApiOperation(value = "修改卡片类型")
     public AjaxResult edit(@RequestBody CardType cardType)
     {
         return toAjax(cardTypeService.updateCardType(cardType));
@@ -97,6 +105,7 @@ public class CardTypeController extends BaseController
     @PreAuthorize("@ss.hasPermi('card:type:remove')")
     @Log(title = "卡片类型", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{cardIds}")
+    @ApiOperation(value = "删除卡片类型")
     public AjaxResult remove(@PathVariable Long[] cardIds)
     {
         return toAjax(cardTypeService.deleteCardTypeByCardIds(cardIds));

@@ -20,6 +20,8 @@ import com.ruoyi.trial.domain.PrintLog;
 import com.ruoyi.trial.service.IPrintLogService;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.common.core.page.TableDataInfo;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 
 /**
  *  打印记录Controller
@@ -29,6 +31,7 @@ import com.ruoyi.common.core.page.TableDataInfo;
  */
 @RestController
 @RequestMapping("/trial/log")
+@Api(tags = "打印记录")
 public class PrintLogController extends BaseController
 {
     @Autowired
@@ -39,6 +42,7 @@ public class PrintLogController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('trial:log:list')")
     @GetMapping("/list")
+    @ApiOperation(value = "查询打印记录列表")
     public TableDataInfo list(PrintLog printLog)
     {
         startPage();
@@ -52,6 +56,7 @@ public class PrintLogController extends BaseController
     @PreAuthorize("@ss.hasPermi('trial:log:export')")
     @Log(title = " 打印记录", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
+    @ApiOperation(value = "导出打印记录列表")
     public void export(HttpServletResponse response, PrintLog printLog)
     {
         List<PrintLog> list = printLogService.selectPrintLogList(printLog);
@@ -64,6 +69,7 @@ public class PrintLogController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('trial:log:query')")
     @GetMapping(value = "/{id}")
+    @ApiOperation(value = "获取打印记录详细信息")
     public AjaxResult getInfo(@PathVariable("id") Long id)
     {
         return success(printLogService.selectPrintLogById(id));
@@ -75,6 +81,7 @@ public class PrintLogController extends BaseController
     @PreAuthorize("@ss.hasPermi('trial:log:add')")
     @Log(title = " 打印记录", businessType = BusinessType.INSERT)
     @PostMapping
+    @ApiOperation(value = "新增打印记录")
     public AjaxResult add(@RequestBody PrintLog printLog)
     {
         return toAjax(printLogService.insertPrintLog(printLog));
@@ -86,6 +93,7 @@ public class PrintLogController extends BaseController
     @PreAuthorize("@ss.hasPermi('trial:log:edit')")
     @Log(title = " 打印记录", businessType = BusinessType.UPDATE)
     @PutMapping
+    @ApiOperation(value = "修改打印记录")
     public AjaxResult edit(@RequestBody PrintLog printLog)
     {
         return toAjax(printLogService.updatePrintLog(printLog));
@@ -97,6 +105,7 @@ public class PrintLogController extends BaseController
     @PreAuthorize("@ss.hasPermi('trial:log:remove')")
     @Log(title = " 打印记录", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{ids}")
+    @ApiOperation(value = "删除打印记录")
     public AjaxResult remove(@PathVariable Long[] ids)
     {
         return toAjax(printLogService.deletePrintLogByIds(ids));

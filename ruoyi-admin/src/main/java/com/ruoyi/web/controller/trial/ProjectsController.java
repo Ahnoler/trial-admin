@@ -17,6 +17,8 @@ import com.ruoyi.trial.service.ITrialTaskDetailProdService;
 import com.ruoyi.trial.service.ITrialTaskProdService;
 import com.sun.org.slf4j.internal.Logger;
 import com.sun.org.slf4j.internal.LoggerFactory;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +40,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/trial/projects")
+@Api(tags = "项目管理")
 public class ProjectsController extends BaseController {
     @Autowired
     private IProjectsService projectsService;
@@ -57,6 +60,7 @@ public class ProjectsController extends BaseController {
      */
     @PreAuthorize("@ss.hasPermi('trial:projects:list')")
     @GetMapping("/list")
+    @ApiOperation(value = "查询项目管理列表")
     public TableDataInfo list(Projects projects) {
         startPage();
         List<Projects> list = projectsService.selectProjectsList(projects);
@@ -69,6 +73,7 @@ public class ProjectsController extends BaseController {
     @PreAuthorize("@ss.hasPermi('trial:projects:export')")
     @Log(title = "项目管理", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
+    @ApiOperation(value = "导出项目管理列表")
     public void export(HttpServletResponse response, Projects projects) {
         List<Projects> list = projectsService.selectProjectsList(projects);
         ExcelUtil<Projects> util = new ExcelUtil<Projects>(Projects.class);
@@ -80,6 +85,7 @@ public class ProjectsController extends BaseController {
      */
     @PreAuthorize("@ss.hasPermi('trial:projects:query')")
     @GetMapping(value = "/{id}")
+    @ApiOperation(value = "获取项目管理详细信息")
     public AjaxResult getInfo(@PathVariable("id") Long id) {
         return success(projectsService.selectProjectsById(id));
     }
@@ -90,6 +96,7 @@ public class ProjectsController extends BaseController {
     @PreAuthorize("@ss.hasPermi('trial:projects:add')")
     @Log(title = "项目管理", businessType = BusinessType.INSERT)
     @PostMapping
+    @ApiOperation(value = "新增项目管理")
     public AjaxResult add(@RequestBody Projects projects) {
         return toAjax(projectsService.insertProjects(projects));
     }
@@ -100,6 +107,7 @@ public class ProjectsController extends BaseController {
     @PreAuthorize("@ss.hasPermi('trial:projects:edit')")
     @Log(title = "项目管理", businessType = BusinessType.UPDATE)
     @PutMapping
+    @ApiOperation(value = "修改项目管理")
     public AjaxResult edit(@RequestBody Projects projects) {
         return toAjax(projectsService.updateProjects(projects));
     }
@@ -110,6 +118,7 @@ public class ProjectsController extends BaseController {
     @PreAuthorize("@ss.hasPermi('trial:projects:remove')")
     @Log(title = "项目管理", businessType = BusinessType.DELETE)
     @DeleteMapping("/{ids}")
+    @ApiOperation(value = "删除项目管理")
     public AjaxResult remove(@PathVariable Long[] ids) {
         return toAjax(projectsService.deleteProjectsByIds(ids));
     }
@@ -120,6 +129,7 @@ public class ProjectsController extends BaseController {
     @PreAuthorize("@ss.hasPermi('trial:projects:print')")
     @Log(title = "项目管理", businessType = BusinessType.OTHER)
     @GetMapping("/print/{id}")
+    @ApiOperation(value = "打印项目基本信息")
     public void print(@PathVariable Long id, HttpServletResponse response) throws Exception {
         Projects project = projectsService.selectProjectsById(id);
         if (project == null) {
@@ -153,6 +163,7 @@ public class ProjectsController extends BaseController {
     @PreAuthorize("@ss.hasPermi('trial:projects:export')")
     @Log(title = "项目管理", businessType = BusinessType.EXPORT)
     @GetMapping(value = "/exportPdf/{id}", produces = "application/pdf")
+    @ApiOperation(value = "导出项目为PDF")
     public void exportPdf(@PathVariable Long id, HttpServletResponse response) throws Exception {
         // 1. 查询项目数据
         Projects project = projectsService.selectProjectsById(id);
@@ -189,6 +200,7 @@ public class ProjectsController extends BaseController {
     @PreAuthorize("@ss.hasPermi('trial:projects:print')")
     @Log(title = "项目管理", businessType = BusinessType.OTHER)
     @GetMapping("/printAllCards/{id}")
+    @ApiOperation(value = "打印项目所有零件的电子流转卡")
     public void printAllCards(@PathVariable Long id, HttpServletResponse response) throws Exception {
         // ========== 【提前设置响应编码，无论什么情况都输出HTML，从根源杜绝空白页】 ==========
         response.setContentType("text/html;charset=UTF-8");
