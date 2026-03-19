@@ -138,6 +138,7 @@ export default {
 				this.roleGroup = res.roleGroup || ''
 				
 				this.formData = {
+					userId: this.userInfo.userId,
 					nickName: this.userInfo.nickName || '',
 					phonenumber: this.userInfo.phonenumber || '',
 					email: this.userInfo.email || '',

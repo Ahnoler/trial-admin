@@ -2,7 +2,7 @@
 	<view class="user-container">
 		<view class="user-header">
 			<view class="user-avatar">
-				<image class="avatar-img" :src="userInfo.avatar || '/static/logo.png'" mode="aspectFill"></image>
+				<image class="avatar-img" :src="avatarUrl" mode="aspectFill"></image>
 			</view>
 			<text class="user-name">{{ userInfo.userName || '未登录' }}</text>
 			<text class="user-role">{{ userInfo.dept?.deptName || '暂无部门' }}</text>
@@ -70,6 +70,7 @@
 <script>
 import { useUserStore } from '@/store/user.js'
 import taskApi from '@/api/task.js'
+import config from '@/config/index.js'
 
 export default {
 	data() {
@@ -80,6 +81,15 @@ export default {
 				progress: 0,
 				completed: 0
 			}
+		}
+	},
+	
+	computed: {
+		avatarUrl() {
+			if (this.userInfo.avatar) {
+				return config.BASE_URL + this.userInfo.avatar
+			}
+			return '/static/logo.png'
 		}
 	},
 	
