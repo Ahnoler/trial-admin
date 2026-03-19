@@ -29,8 +29,8 @@ export function addProd(data) {
 // 修改试制任务信息
 export function updateProd(data) {
   return request({
-    url: '/trial/prod/detail',
-    method: 'put',
+    url: '/trial/prod/detail/edit',
+    method: 'post',
     data: data
   })
 }
