@@ -56,7 +56,7 @@
 						</view>
 						
 						<view class="process-action" v-if="item.status === '1'">
-							<button class="action-btn" @click.stop="handleFill(item)">立即填报</button>
+							<button class="action-btn" @click.stop="handleProcessClick(item)">立即填报</button>
 						</view>
 					</view>
 				</view>
@@ -82,6 +82,13 @@ export default {
 		this.taskId = options.taskId
 		this.getTaskDetail()
 		this.getProcessList()
+	},
+	
+	onShow() {
+		if (this.taskId) {
+			this.getTaskDetail()
+			this.getProcessList()
+		}
 	},
 	
 	onPullDownRefresh() {
@@ -130,14 +137,8 @@ export default {
 		},
 		
 		handleProcessClick(process) {
-			if (process.status === '1') {
-				this.handleFill(process)
-			}
-		},
-		
-		handleFill(process) {
 			uni.navigateTo({
-				url: `/pages/fill-form/fill-form?id=${process.id}&taskId=${this.taskId}`
+				url: `/pages/fill-form/fill-form?id=${process.id}&taskId=${this.taskId}&readonly=${process.status !== '1'}`
 			})
 		},
 		

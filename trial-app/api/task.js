@@ -10,15 +10,15 @@ export default {
 	},
 	
 	getTaskProcessList(taskId) {
-		return request.get('/trial/prodDetail/list', { taskId })
+		return request.get('/trial/prod/detail/list', { taskId })
 	},
 	
 	getProcessDetail(id) {
-		return request.get(`/trial/prodDetail/${id}`)
+		return request.get(`/trial/prod/detail/${id}`)
 	},
 	
 	updateProcess(data) {
-		return request.put('/trial/prodDetail', data)
+		return request.post('/trial/prod/detail/edit', data)
 	},
 	
 	scanQRCode(qrCode) {

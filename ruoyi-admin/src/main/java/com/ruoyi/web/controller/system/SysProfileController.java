@@ -61,6 +61,7 @@ public class SysProfileController extends BaseController
     {
         LoginUser loginUser = getLoginUser();
         SysUser sysUser = loginUser.getUser();
+        user.setUserId(sysUser.getUserId());
         user.setUserName(sysUser.getUserName());
         if (StringUtils.isNotEmpty(user.getPhonenumber()) && !userService.checkPhoneUnique(user))
         {
@@ -70,13 +71,11 @@ public class SysProfileController extends BaseController
         {
             return error("修改用户'" + user.getUserName() + "'失败，邮箱账号已存在");
         }
-        user.setUserId(sysUser.getUserId());
         user.setPassword(null);
         user.setAvatar(null);
         user.setDeptId(null);
         if (userService.updateUserProfile(user) > 0)
         {
-            // 更新缓存用户信息
             sysUser.setNickName(user.getNickName());
             sysUser.setPhonenumber(user.getPhonenumber());
             sysUser.setEmail(user.getEmail());

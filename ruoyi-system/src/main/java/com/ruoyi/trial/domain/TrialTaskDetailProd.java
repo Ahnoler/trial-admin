@@ -124,6 +124,11 @@ public class TrialTaskDetailProd extends BaseEntity {
     private String notes;
 
     /**
+     * 附件图片
+     */
+    private String images;
+
+    /**
      * 状态（0正常 1停用）
      */
     @Excel(name = "状态", readConverterExp = "0=正常,1=停用")

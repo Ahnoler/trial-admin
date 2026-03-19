@@ -21,7 +21,7 @@ export const useUserStore = defineStore('user', {
 				this.token = res.token
 				uni.setStorageSync(config.TOKEN_KEY, res.token)
 				
-				await this.getUserInfo()
+				await this.fetchUserInfo()
 				
 				return res
 			} catch (error) {
@@ -29,7 +29,7 @@ export const useUserStore = defineStore('user', {
 			}
 		},
 		
-		async getUserInfo() {
+		async fetchUserInfo() {
 			try {
 				const res = await userApi.getUserInfo()
 				this.userInfo = res.user
@@ -53,9 +53,9 @@ export const useUserStore = defineStore('user', {
 			}
 		},
 		
-		updateUserInfo(userInfo) {
-			this.userInfo = { ...this.userInfo, ...userInfo }
-			uni.setStorageSync(config.USER_INFO_KEY, this.userInfo)
+		setUserInfo(userInfo) {
+			this.userInfo = userInfo
+			uni.setStorageSync(config.USER_INFO_KEY, userInfo)
 		}
 	}
 })

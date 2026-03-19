@@ -224,7 +224,7 @@ export default {
 	}
 	
 	.input {
-		width: 100%;
+		width: 90%;
 		height: 88rpx;
 		background: #F5F7FA;
 		border-radius: 12rpx;

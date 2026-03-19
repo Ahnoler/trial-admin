@@ -41,6 +41,12 @@
 			"style": {
 				"navigationBarTitleText": "个人中心"
 			}
+		},
+		{
+			"path": "pages/profile/profile",
+			"style": {
+				"navigationBarTitleText": "个人信息"
+			}
 		}
 	],
 	"globalStyle": {
@@ -57,15 +63,21 @@
 		"list": [
 			{
 				"pagePath": "pages/index/index",
-				"text": "首页"
+				"text": "首页",
+				"iconPath": "static/tabbar/home.png",
+				"selectedIconPath": "static/tabbar/home-active.png"
 			},
 			{
 				"pagePath": "pages/history/history",
-				"text": "历史"
+				"text": "历史",
+				"iconPath": "static/tabbar/history.png",
+				"selectedIconPath": "static/tabbar/history-active.png"
 			},
 			{
 				"pagePath": "pages/user/user",
-				"text": "我的"
+				"text": "我的",
+				"iconPath": "static/tabbar/user.png",
+				"selectedIconPath": "static/tabbar/user-active.png"
 			}
 		]
 	},

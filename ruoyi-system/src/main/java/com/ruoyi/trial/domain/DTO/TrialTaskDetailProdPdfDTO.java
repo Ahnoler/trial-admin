@@ -76,4 +76,10 @@ public class TrialTaskDetailProdPdfDTO {
      */
     @Schema(description = "备注", example = "无")
     private String notes;
+
+    /**
+     * 附件图片
+     */
+    @Schema(description = "附件图片", example = "/profile/upload/xxx.jpg")
+    private String images;
 }

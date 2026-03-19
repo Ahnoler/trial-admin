@@ -13,7 +13,15 @@ export default {
 		return request.post('/logout')
 	},
 	
-	updateUserInfo(data) {
+	getProfile() {
+		return request.get('/system/user/profile')
+	},
+	
+	updateProfile(data) {
 		return request.put('/system/user/profile', data)
+	},
+	
+	updatePwd(oldPassword, newPassword) {
+		return request.put(`/system/user/profile/updatePwd?oldPassword=${encodeURIComponent(oldPassword)}&newPassword=${encodeURIComponent(newPassword)}`)
 	}
 }

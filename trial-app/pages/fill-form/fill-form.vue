@@ -22,6 +22,7 @@
 						v-model="formData.trialQuantity" 
 						type="number"
 						placeholder="请输入试制数量"
+						:disabled="readonly"
 					/>
 				</view>
 				
@@ -32,6 +33,7 @@
 						v-model="formData.inspectionQuantity" 
 						type="number"
 						placeholder="请输入送检数量"
+						:disabled="readonly"
 					/>
 				</view>
 				
@@ -41,10 +43,11 @@
 						mode="selector" 
 						:range="qualityStatusOptions" 
 						@change="handleQualityChange"
+						:disabled="readonly"
 					>
 						<view class="item-picker">
 							<text class="picker-text">{{ formData.manufacturingQualityStatus || '请选择' }}</text>
-							<text class="picker-icon">></text>
+							<text class="picker-icon" v-if="!readonly">></text>
 						</view>
 					</picker>
 				</view>
@@ -55,10 +58,11 @@
 						mode="selector" 
 						:range="qualityStatusOptions" 
 						@change="handleProcessQualityChange"
+						:disabled="readonly"
 					>
 						<view class="item-picker">
 							<text class="picker-text">{{ formData.processQualityStatus || '请选择' }}</text>
-							<text class="picker-icon">></text>
+							<text class="picker-icon" v-if="!readonly">></text>
 						</view>
 					</picker>
 				</view>
@@ -69,6 +73,7 @@
 						class="item-input" 
 						v-model="formData.manufacturingArea" 
 						placeholder="请输入制造区域"
+						:disabled="readonly"
 					/>
 				</view>
 			</view>
@@ -82,6 +87,7 @@
 						class="item-input" 
 						v-model="formData.director" 
 						placeholder="请输入负责人"
+						:disabled="readonly"
 					/>
 				</view>
 				
@@ -92,6 +98,7 @@
 						v-model="formData.directorTel" 
 						type="number"
 						placeholder="请输入负责人电话"
+						:disabled="readonly"
 					/>
 				</view>
 				
@@ -101,6 +108,7 @@
 						class="item-input" 
 						v-model="formData.meDirector" 
 						placeholder="请输入责任ME"
+						:disabled="readonly"
 					/>
 				</view>
 				
@@ -111,6 +119,7 @@
 						v-model="formData.meDirectorTel" 
 						type="number"
 						placeholder="请输入ME联系电话"
+						:disabled="readonly"
 					/>
 				</view>
 			</view>
@@ -124,6 +133,7 @@
 						class="item-input" 
 						v-model="formData.figure" 
 						placeholder="请输入图号"
+						:disabled="readonly"
 					/>
 				</view>
 				
@@ -134,24 +144,25 @@
 						v-model="formData.notes" 
 						placeholder="请输入备注"
 						:maxlength="500"
+						:disabled="readonly"
 					/>
 				</view>
 				
 				<view class="form-item">
 					<text class="item-label">附件上传</text>
 					<view class="upload-area">
-						<view class="upload-btn" @click="handleUpload">
+						<view class="upload-btn" @click="handleUpload" v-if="!readonly">
 							<text class="upload-icon">+</text>
 							<text class="upload-text">上传图片</text>
 						</view>
 						<view class="image-list">
 							<view 
 								class="image-item" 
-								v-for="(img, index) in imageList" 
+								v-for="(img, index) in imageUrls" 
 								:key="index"
 							>
 								<image class="preview-image" :src="img" mode="aspectFill"></image>
-								<view class="delete-btn" @click="handleDeleteImage(index)">
+								<view class="delete-btn" @click="handleDeleteImage(index)" v-if="!readonly">
 									<text class="delete-icon">×</text>
 								</view>
 							</view>
@@ -161,7 +172,7 @@
 			</view>
 		</view>
 		
-		<view class="form-footer">
+		<view class="form-footer" v-if="!readonly">
 			<button class="save-btn" @click="handleSave" :loading="loading">保存</button>
 			<button class="submit-btn" @click="handleSubmit" :loading="loading">提交</button>
 		</view>
@@ -171,6 +182,7 @@
 <script>
 import taskApi from '@/api/task.js'
 import uploadApi from '@/api/upload.js'
+import config from '@/config/index.js'
 
 export default {
 	data() {
@@ -189,17 +201,21 @@ export default {
 				meDirector: '',
 				meDirectorTel: '',
 				figure: '',
-				notes: ''
+				notes: '',
+				images: ''
 			},
 			imageList: [],
+			imageUrls: [],
 			qualityStatusOptions: ['合格', '不合格', '待定'],
-			loading: false
+			loading: false,
+			readonly: false
 		}
 	},
 	
 	onLoad(options) {
 		this.processId = options.id
 		this.taskId = options.taskId
+		this.readonly = options.readonly === 'true'
 		this.getProcessDetail()
 	},
 	
@@ -220,7 +236,14 @@ export default {
 					meDirector: this.processInfo.meDirector || '',
 					meDirectorTel: this.processInfo.meDirectorTel || '',
 					figure: this.processInfo.figure || '',
-					notes: this.processInfo.notes || ''
+					notes: this.processInfo.notes || '',
+					images: this.processInfo.images || ''
+				}
+				
+				if (this.processInfo.images) {
+					const imageArr = this.processInfo.images.split(',')
+					this.imageList = imageArr
+					this.imageUrls = imageArr.map(img => config.BASE_URL + img)
 				}
 			} catch (error) {
 				console.error('获取程序详情失败:', error)
@@ -240,6 +263,7 @@ export default {
 				const results = await uploadApi.chooseAndUploadImage(3 - this.imageList.length)
 				results.forEach(result => {
 					this.imageList.push(result.fileName)
+					this.imageUrls.push(config.BASE_URL + result.fileName)
 				})
 				
 				uni.showToast({
@@ -253,6 +277,7 @@ export default {
 		
 		handleDeleteImage(index) {
 			this.imageList.splice(index, 1)
+			this.imageUrls.splice(index, 1)
 		},
 		
 		validateForm() {
@@ -286,7 +311,8 @@ export default {
 				await taskApi.updateProcess({
 					id: this.processId,
 					taskId: this.taskId,
-					...this.formData
+					...this.formData,
+					images: this.imageList.join(',')
 				})
 				
 				uni.showToast({
@@ -317,6 +343,7 @@ export default {
 								id: this.processId,
 								taskId: this.taskId,
 								...this.formData,
+								images: this.imageList.join(','),
 								status: '2'
 							})
 							
@@ -417,7 +444,7 @@ export default {
 	}
 	
 	.item-input {
-		width: 100%;
+		width: 90%;
 		height: 80rpx;
 		background: #F5F7FA;
 		border-radius: 12rpx;
@@ -426,7 +453,7 @@ export default {
 	}
 	
 	.item-picker {
-		width: 100%;
+		width: 90%;
 		height: 80rpx;
 		background: #F5F7FA;
 		border-radius: 12rpx;
@@ -447,7 +474,7 @@ export default {
 	}
 	
 	.item-textarea {
-		width: 100%;
+		width: 90%;
 		min-height: 200rpx;
 		background: #F5F7FA;
 		border-radius: 12rpx;

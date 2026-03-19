@@ -112,9 +112,8 @@ export default {
 		handleMenuClick(type) {
 			switch (type) {
 				case 'profile':
-					uni.showToast({
-						title: '功能开发中',
-						icon: 'none'
+					uni.navigateTo({
+						url: '/pages/profile/profile'
 					})
 					break
 				case 'password':
