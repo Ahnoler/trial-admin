@@ -57,21 +57,15 @@
 		"list": [
 			{
 				"pagePath": "pages/index/index",
-				"text": "首页",
-				"iconPath": "static/tabbar/home.png",
-				"selectedIconPath": "static/tabbar/home-active.png"
+				"text": "首页"
 			},
 			{
 				"pagePath": "pages/history/history",
-				"text": "历史",
-				"iconPath": "static/tabbar/history.png",
-				"selectedIconPath": "static/tabbar/history-active.png"
+				"text": "历史"
 			},
 			{
 				"pagePath": "pages/user/user",
-				"text": "我的",
-				"iconPath": "static/tabbar/user.png",
-				"selectedIconPath": "static/tabbar/user-active.png"
+				"text": "我的"
 			}
 		]
 	},

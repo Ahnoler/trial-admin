@@ -22,7 +22,7 @@ export default {
 	},
 	
 	scanQRCode(qrCode) {
-		return request.get('/trial/prod/scan', { qrCode })
+		return request.get(`/trial/prod/scan/${qrCode}`)
 	},
 	
 	getMyTaskList(params) {

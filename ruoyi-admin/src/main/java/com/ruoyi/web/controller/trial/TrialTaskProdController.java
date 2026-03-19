@@ -66,6 +66,14 @@ public class TrialTaskProdController extends BaseController {
         return toAjax(trialTaskProdService.deleteTrialTaskProdByTaskIds(taskIds));
     }
 
+    @GetMapping("/myTask")
+    @ApiOperation(value = "获取我的待办任务列表")
+    public TableDataInfo myTask(TrialTaskProd trialTaskProd) {
+        startPage();
+        List<TrialTaskProd> list = trialTaskProdService.selectTrialTaskProdList(trialTaskProd);
+        return getDataTable(list);
+    }
+
     @GetMapping(value = "/{taskId}")
     @ApiOperation(value = "获取零件流转卡详细信息")
     @PreAuthorize("@ss.hasPermi('trial:prod:query')")
