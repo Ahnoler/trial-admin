@@ -94,12 +94,22 @@ public class TrialTaskDetailProdController extends BaseController {
     @PostMapping("/apply")
     @ApiOperation(value = "申请试制任务-零件流转卡-流转程序")
     public AjaxResult apply(@RequestBody TrialTaskDetailProd trialTaskDetailProd) {
-        TrialTaskProd taskProd = trialTaskProdService.selectTrialTaskProdByTaskId(trialTaskDetailProd.getTaskId());
-        if ("2".equals(taskProd.getStatus())) {
+        if (trialTaskDetailProd.getId() == null) {
+            return AjaxResult.error("ID不能为空");
+        }
+        TrialTaskDetailProd currentProd = trialTaskDetailProdService.selectTrialTaskDetailProdById(trialTaskDetailProd.getId());
+        if (currentProd == null) {
+            return AjaxResult.error("未找到该流转程序");
+        }
+        if (!"1".equals(currentProd.getStatus())) {
+            return AjaxResult.error("只有正在填报状态的流转程序才能申请");
+        }
+        TrialTaskProd taskProd = trialTaskProdService.selectTrialTaskProdByTaskId(currentProd.getTaskId());
+        if (taskProd != null && "2".equals(taskProd.getStatus())) {
             return AjaxResult.error("任务已结束，无法申请");
         }
-        trialTaskDetailProd.setStatus("2");
-        return toAjax(trialTaskDetailProdService.updateTrialTaskDetailProd(trialTaskDetailProd));
+        currentProd.setStatus("2");
+        return toAjax(trialTaskDetailProdService.updateTrialTaskDetailProd(currentProd));
     }
 
 
@@ -108,15 +118,17 @@ public class TrialTaskDetailProdController extends BaseController {
     @PreAuthorize("@ss.hasPermi('trial:prod:edit')")
     @Log(title = "试制任务程序", businessType = BusinessType.UPDATE)
     public AjaxResult approve(@RequestBody TrialTaskDetailProd trialTaskDetailProd) {
-        TrialTaskProd taskProd = trialTaskProdService.selectTrialTaskProdByTaskId(trialTaskDetailProd.getTaskId());
-        if ("2".equals(taskProd.getStatus())) {
+        if (trialTaskDetailProd.getId() == null) {
+            return AjaxResult.error("ID不能为空");
+        }
+        TrialTaskDetailProd currentProd = trialTaskDetailProdService.selectTrialTaskDetailProdById(trialTaskDetailProd.getId());
+        if (currentProd == null) {
+            return AjaxResult.error("未找到该流转程序");
+        }
+        TrialTaskProd taskProd = trialTaskProdService.selectTrialTaskProdByTaskId(currentProd.getTaskId());
+        if (taskProd != null && "2".equals(taskProd.getStatus())) {
             return AjaxResult.error("任务已结束，无法审核");
         }
-        //审核通过当前程序
-        trialTaskDetailProd.setStatus("3");
-        trialTaskDetailProdService.updateTrialTaskDetailProd(trialTaskDetailProd);
-
-        //生成或者改变当前环节
-        return toAjax(trialTaskDetailProdService.approveTrialTaskDetailProd(trialTaskDetailProd));
+        return toAjax(trialTaskDetailProdService.approveTrialTaskDetailProdById(trialTaskDetailProd.getId()));
     }
 }

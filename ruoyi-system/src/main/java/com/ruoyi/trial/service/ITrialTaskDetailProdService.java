@@ -51,6 +51,15 @@ public interface ITrialTaskDetailProdService
      * @return 结果
      */
     public int approveTrialTaskDetailProd(TrialTaskDetailProd trialTaskDetailProd);
+
+    /**
+     * 根据ID审核试制任务程序
+     *
+     * @param id 试制任务程序ID
+     * @return 结果
+     */
+    public int approveTrialTaskDetailProdById(Long id);
+
     /**
      * 批量删除试制任务程序
      * 

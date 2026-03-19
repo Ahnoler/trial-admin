@@ -2,7 +2,9 @@
 	<div class="app-container">
 		<el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
 			<el-form-item label="任务编号" prop="taskId">
-				<el-input v-model="queryParams.taskId" placeholder="请输入任务编号" clearable @keyup.enter.native="handleQuery" />
+				<el-select v-model="queryParams.taskId" placeholder="请选择试制任务" clearable filterable @change="handleQuery">
+					<el-option v-for="item in taskList" :key="item.taskId" :label="item.title" :value="item.taskId" />
+				</el-select>
 			</el-form-item>
 
 			<el-form-item label="图号" prop="figure">
@@ -38,15 +40,18 @@
 			<el-col :span="1.5">
 				<el-button type="warning" plain icon="el-icon-download" size="mini" @click="handleExport"
 					v-hasPermi="['trial:prod:detail:export']">导出</el-button>
-				<el-button size="mini" type="success" icon="el-icon-refresh-left" @click="handleApply()" :disabled="single"
+				<el-button size="mini" type="success" icon="el-icon-refresh-left" @click="handleApply()" :disabled="single || !canApply"
 					v-hasPermi="['trial:prod:detail:edit']">申请</el-button>
-				<el-button size="mini" type="info" icon="el-icon-s-check" :disabled="single" @click="handleAppove()"
+				<el-button size="mini" type="info" icon="el-icon-s-check" :disabled="single || !canApprove" @click="handleAppove()"
 					v-hasPermi="['trial:prod:detail:edit']">审核</el-button>
 			</el-col>
 			<right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
 		</el-row>
 
 		<el-table v-loading="loading" :data="prodList" @selection-change="handleSelectionChange">
+			<template slot="empty">
+				<div class="empty-tip">请先选择试制任务</div>
+			</template>
 			<el-table-column type="selection" width="55" align="center" />
 			<el-table-column type="expand" width="50">
 				<template slot-scope="props">
@@ -91,8 +96,7 @@
 			</el-table-column>
 		</el-table>
 
-		<pagination v-show="total>0" :total="total" :page.sync="queryParams.pageNum" :limit.sync="queryParams.pageSize"
-			@pagination="getList" />
+
 
 		<!-- 添加或修改试制任务程序对话框 -->
 		<el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
@@ -159,6 +163,7 @@
 		approveProd,
 		applyProd
 	} from "@/api/trial/prodDetail";
+	import { listProd as listTrialTask } from "@/api/trial/prod";
 
 	export default {
 		name: "ProdDetail",
@@ -166,45 +171,35 @@
 		data() {
 			return {
 				// 遮罩层
-				loading: true,
+				loading: false,
 				// 选中数组
 				ids: [],
 				// 非单个禁用
 				single: true,
 				// 非多个禁用
 				multiple: true,
+				// 是否可以申请
+				canApply: false,
+				// 是否可以审核
+				canApprove: false,
 				// 显示搜索条件
 				showSearch: true,
 				// 总条数
 				total: 0,
 				// 试制任务程序表格数据
 				prodList: [],
+				// 试制任务列表
+				taskList: [],
 				// 弹出层标题
 				title: "",
 				// 是否显示弹出层
 				open: false,
 				// 查询参数
 				queryParams: {
-					pageNum: 1,
-					pageSize: 10,
 					taskId: null,
-					cardType: null,
-					columnCode: null,
-					serialNo: null,
-					program: null,
-					name: null,
 					figure: null,
-					trialQuantity: null,
-					inspectionQuantity: null,
-					manufacturingQualityStatus: null,
-					manufacturingArea: null,
 					director: null,
-					directorTel: null,
-					processQualityStatus: null,
 					meDirector: null,
-					meDirectorTel: null,
-					notes: null,
-					status: null,
 				},
 				// 表单参数
 				form: {},
@@ -224,9 +219,15 @@
 			};
 		},
 		created() {
-			this.getList();
+			this.getTaskList();
 		},
 		methods: {
+			/** 查询试制任务列表 */
+			getTaskList() {
+				listTrialTask().then(response => {
+					this.taskList = response.rows || [];
+				});
+			},
 			/** 查询试制任务程序列表 */
 			getList() {
 				this.loading = true;
@@ -273,7 +274,10 @@
 			},
 			/** 搜索按钮操作 */
 			handleQuery() {
-				this.queryParams.pageNum = 1;
+				if (!this.queryParams.taskId) {
+					this.$modal.msgWarning("请先选择试制任务");
+					return;
+				}
 				this.getList();
 			},
 			/** 重置按钮操作 */
@@ -286,6 +290,8 @@
 				this.ids = selection.map(item => item.id)
 				this.single = selection.length !== 1
 				this.multiple = !selection.length
+				this.canApply = selection.length === 1 && selection[0].status === '1'
+				this.canApprove = selection.length === 1 && selection[0].status === '2'
 			},
 			/** 新增按钮操作 */
 			handleAdd() {
@@ -325,52 +331,25 @@
 			},
 			/** 申请按钮操作 */
 			handleApply(row) {
-				const that = this;
-				this.$modal.confirm('是否确认申请试制任务程序的填写内容').then(function() {
-					return that.applyProdProcess();
-				}).then(() => {
-					this.reset();
-					this.getList();
-					//return that.applyProdProcess();
-				}).catch((e) => {
-					//this.$modal.msgSuccess("申请失败"+e);
-					return;
-				});
-			},
-			applyProdProcess() {
-				const id = this.ids;
-				getProd(id).then(response => {
-					this.form = response.data;
-					applyProd(this.form).then(responseNode => {
+				const id = this.ids[0];
+				this.$modal.confirm('是否确认申请试制任务程序的填写内容').then(() => {
+					applyProd({ id: id }).then(response => {
 						this.$modal.msgSuccess("申请成功");
 						this.reset();
 						this.getList();
 					});
-				});
+				}).catch(() => {});
 			},
 			/** 审核按钮操作 */
 			handleAppove(row) {
-				const that = this;
-				this.$modal.confirm('是否确认审核试制任务程序的填写内容').then(function() {
-					const id = that.ids;
-					getProd(id).then(response => {
-						that.form = response.data;
-						approveProd(that.form).then(responseNode => {
-							that.$modal.msgSuccess("审核成功");
-							that.reset();
-							that.getList();
-						});
+				const id = this.ids[0];
+				this.$modal.confirm('是否确认审核试制任务程序的填写内容').then(() => {
+					approveProd({ id: id }).then(response => {
+						this.$modal.msgSuccess("审核成功");
+						this.reset();
+						this.getList();
 					});
-				}).then(() => {
-					this.reset();
-					this.getList();
-				}).catch((e) => {
-					//this.$modal.msgSuccess("审核失败"+e);
-					return;
-				});
-
-
-
+				}).catch(() => {});
 			},
 			/** 删除按钮操作 */
 			handleDelete(row) {
@@ -403,5 +382,11 @@
   width: 100%;
   margin-bottom: 16px;
   margin-right: 0;
+}
+
+.empty-tip {
+  font-size: 18px;
+  color: #909399;
+  padding: 40px 0;
 }
 </style>

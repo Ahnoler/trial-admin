@@ -89,64 +89,45 @@ public class TrialTaskDetailProdServiceImpl implements ITrialTaskDetailProdServi
      */
     @Override
     public int approveTrialTaskDetailProd(TrialTaskDetailProd trialTaskDetailProd){
-        //获取当前任务
-        TrialTaskProd trialTaskProd =  trialTaskProdMapper.selectTrialTaskProdByTaskId(trialTaskDetailProd.getTaskId());
+        return approveTrialTaskDetailProdById(trialTaskDetailProd.getId());
+    }
 
-        //查询当前任务的卡片序号列表
-        TrialTaskDetailProd node = new TrialTaskDetailProd();
-        node.setTaskId(trialTaskDetailProd.getTaskId());
-        List<TrialTaskDetailProd> list = trialTaskDetailProdMapper.selectTrialTaskDetailProdList(node);
-
-        //查询下一个程序的节点
-        int nextNode = -1;
-        for(int i=0;i<list.size();i++){
-            int currentNode = list.get(i).getSerialNo();
-            if (currentNode == trialTaskDetailProd.getSerialNo()&&i<list.size()-1){
-                nextNode = list.get(i+1).getSerialNo();
-            }
+    /**
+     * 根据ID审核试制任务程序
+     *
+     * @param id 试制任务程序ID
+     * @return 结果
+     */
+    @Override
+    public int approveTrialTaskDetailProdById(Long id){
+        TrialTaskDetailProd currentProd = trialTaskDetailProdMapper.selectTrialTaskDetailProdById(id);
+        if (currentProd == null) {
+            return 0;
         }
+        if (!"2".equals(currentProd.getStatus())) {
+            return 0;
+        }
+        currentProd.setStatus("3");
+        trialTaskDetailProdMapper.updateTrialTaskDetailProd(currentProd);
 
-        //更新下一个程序的状态为当前节点
-        if (nextNode>-1) {
-            //获取卡片列表
-            TrialTaskDetailProd trialTaskDetailProdNext = new TrialTaskDetailProd();
-            trialTaskDetailProdNext.setTaskId(trialTaskDetailProd.getTaskId());
-            trialTaskDetailProdNext.setSerialNo(nextNode);
-            List<TrialTaskDetailProd> nextList = trialTaskDetailProdMapper.selectTrialTaskDetailProdList(trialTaskDetailProdNext);
+        TrialTaskDetailProd queryParam = new TrialTaskDetailProd();
+        queryParam.setTaskId(currentProd.getTaskId());
+        List<TrialTaskDetailProd> list = trialTaskDetailProdMapper.selectTrialTaskDetailProdList(queryParam);
+        list.sort((a, b) -> a.getSerialNo().compareTo(b.getSerialNo()));
 
-            if (nextList.size()>0){
-                //如果当前程序为min=1,max=1则需要把当前环节跳转到下一个程序,如果是min=1,max>1则要判断是否属于同一个大环节，相同则修改，不相同则需要新插入一条记录
-                int min = cardColumnHeaderMapper.selectCardColumnHeaderByColumnCode(trialTaskDetailProd.getColumnCode()).getColumnMin();
-                int max = cardColumnHeaderMapper.selectCardColumnHeaderByColumnCode(trialTaskDetailProd.getColumnCode()).getColumnMax();
+        for (int i = 0; i < list.size(); i++) {
+            if (list.get(i).getId().equals(id) && i < list.size() - 1) {
+                TrialTaskDetailProd nextProd = list.get(i + 1);
+                nextProd.setStatus("1");
+                trialTaskDetailProdMapper.updateTrialTaskDetailProd(nextProd);
 
-                //判断大节点是否一样
-                boolean same = nextNode/100 == trialTaskDetailProd.getSerialNo()/100;
-
-                if (min==1&&max==1||min==1&&max>1&&same){
-
-                    //先修改下一个环节
-                    TrialTaskDetailProd trialTaskDetailProdUpdate = nextList.get(0);
-                    trialTaskDetailProdUpdate.setStatus("1");//正在填报状态
-                    trialTaskDetailProdMapper.updateTrialTaskDetailProd(trialTaskDetailProdUpdate);
-
-                    //再修改任务表中的当前环节
-                    trialTaskProd.setCurrentSerialNo(trialTaskDetailProdUpdate.getSerialNo());//把任务表的当前程序环节变为下一个环节
-                    trialTaskProd.setCurrentSerialName(trialTaskDetailProdUpdate.getProgram());//把任务表的当前程序环节变为下一个环节
-                    trialTaskProdMapper.updateTrialTaskProd(trialTaskProd);
-
-                } else {
-                    TrialTaskDetailProd trialTaskDetailProdNew = trialTaskDetailProd;
-                    trialTaskDetailProdNew.setSerialNo(trialTaskDetailProd.getSerialNo()+1);
-                    trialTaskDetailProdNew.setProgram("new");//流转程序
-                    trialTaskDetailProdNew.setStatus("1");//正在填报状态
-                    trialTaskDetailProdNew.setId(null);
-                    trialTaskDetailProdMapper.insertTrialTaskDetailProd(trialTaskDetailProdNew);
-
-                    //再修改任务表中的当前环节
-                    trialTaskProd.setCurrentSerialNo(trialTaskDetailProdNew.getSerialNo());//把任务表的当前程序环节变为下一个环节
-                    trialTaskProd.setCurrentSerialName(trialTaskDetailProdNew.getProgram());//把任务表的当前程序环节变为下一个环节
+                TrialTaskProd trialTaskProd = trialTaskProdMapper.selectTrialTaskProdByTaskId(currentProd.getTaskId());
+                if (trialTaskProd != null) {
+                    trialTaskProd.setCurrentSerialNo(nextProd.getSerialNo());
+                    trialTaskProd.setCurrentSerialName(nextProd.getProgram());
                     trialTaskProdMapper.updateTrialTaskProd(trialTaskProd);
                 }
+                break;
             }
         }
         return 1;
