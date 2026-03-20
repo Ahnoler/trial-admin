@@ -14,6 +14,7 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import com.ruoyi.common.constant.HttpStatus;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.exception.DemoModeException;
+import com.ruoyi.common.exception.OptimisticLockException;
 import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.common.utils.StringUtils;
 
@@ -59,6 +60,17 @@ public class GlobalExceptionHandler
         log.error(e.getMessage(), e);
         Integer code = e.getCode();
         return StringUtils.isNotNull(code) ? AjaxResult.error(code, e.getMessage()) : AjaxResult.error(e.getMessage());
+    }
+
+    /**
+     * 乐观锁异常
+     */
+    @ExceptionHandler(OptimisticLockException.class)
+    public AjaxResult handleOptimisticLockException(OptimisticLockException e, HttpServletRequest request)
+    {
+        String requestURI = request.getRequestURI();
+        log.warn("请求地址'{}',发生乐观锁冲突: {}", requestURI, e.getMessage());
+        return AjaxResult.error(HttpStatus.ERROR, e.getMessage());
     }
 
     /**

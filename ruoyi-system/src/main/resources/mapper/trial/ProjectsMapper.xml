@@ -141,4 +141,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{id}
         </foreach>
     </delete>
+
+    <select id="selectOverdueProjects" resultMap="ProjectsResult">
+        <include refid="selectProjectsVo"/>
+        where end_date &lt; CURDATE()
+        and status = 0
+        and (project_status is null or project_status not in ('已完成', 'completed', '3'))
+    </select>
 </mapper>

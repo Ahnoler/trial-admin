@@ -109,6 +109,11 @@ public class TrialTaskProd extends BaseEntity {
      */
     private String qrCodeUrl;
     
+    /**
+     * 乐观锁版本号
+     */
+    private Integer version;
+
     //    卡片详情
     private String listStr;
 
@@ -131,6 +136,7 @@ public class TrialTaskProd extends BaseEntity {
                 .append("relatedTaskId", getRelatedTaskId())
                 .append("qrCode", getQrCode())
                 .append("qrCodeUrl", getQrCodeUrl())
+                .append("version", getVersion())
                 .append("createBy", getCreateBy())
                 .append("createTime", getCreateTime())
                 .append("updateBy", getUpdateBy())

@@ -81,4 +81,11 @@ public interface TrialTaskProdMapper
      * @return 试制任务信息集合
      */
     public List<TrialTaskProd> selectTrialTaskProdWithoutQrCode();
+
+    /**
+     * 查询超期流转卡列表（关联项目已超期或流转卡长时间未完成）
+     * 
+     * @return 超期流转卡集合
+     */
+    public List<TrialTaskProd> selectOverdueTrialTaskProd();
 }

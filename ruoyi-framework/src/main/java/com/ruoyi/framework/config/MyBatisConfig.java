@@ -23,6 +23,7 @@ import org.springframework.core.type.classreading.MetadataReader;
 import org.springframework.core.type.classreading.MetadataReaderFactory;
 import org.springframework.util.ClassUtils;
 import com.ruoyi.common.utils.StringUtils;
+import com.ruoyi.framework.interceptor.OptimisticLockInterceptor;
 
 /**
  * Mybatis支持*匹配扫描包
@@ -127,6 +128,7 @@ public class MyBatisConfig
         sessionFactory.setTypeAliasesPackage(typeAliasesPackage);
         sessionFactory.setMapperLocations(resolveMapperLocations(StringUtils.split(mapperLocations, ",")));
         sessionFactory.setConfigLocation(new DefaultResourceLoader().getResource(configLocation));
+        sessionFactory.setPlugins(new OptimisticLockInterceptor());
         return sessionFactory.getObject();
     }
 }

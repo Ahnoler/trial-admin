@@ -5,6 +5,7 @@ import java.net.URLEncoder;
 import java.util.*;
 
 import com.alibaba.fastjson2.JSONArray;
+import com.ruoyi.common.exception.OptimisticLockException;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.QRCodeUtil;
@@ -174,7 +175,11 @@ public class TrialTaskProdServiceImpl implements ITrialTaskProdService {
     public int updateTrialTaskProd(TrialTaskProd trialTaskProd) {
 
         trialTaskProd.setUpdateTime(DateUtils.getNowDate());
-        return trialTaskProdMapper.updateTrialTaskProd(trialTaskProd);
+        int rows = trialTaskProdMapper.updateTrialTaskProd(trialTaskProd);
+        if (rows == 0) {
+            throw new OptimisticLockException("试制任务信息已被其他用户修改，请刷新后重试");
+        }
+        return rows;
     }
 
     /**

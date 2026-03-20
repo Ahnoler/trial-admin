@@ -79,7 +79,11 @@
       <el-table-column label="打印单据编号" align="center" prop="taskId" />
       <el-table-column label="打印卡片类型" align="center" prop="cardtype" />
       <el-table-column label="机构编号" align="center" prop="orgnno" />
-      <el-table-column label="打印类型" align="center" prop="printtype" />
+      <el-table-column label="打印类型" align="center" prop="printtype">
+        <template slot-scope="scope">
+          <dict-tag :options="dict.type.print_type" :value="scope.row.printtype" />
+        </template>
+      </el-table-column>
       <el-table-column label="状态" align="center" prop="status" />
       <el-table-column label="备注" align="center" prop="remark" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
@@ -191,6 +195,7 @@ import { listLog, getLog, delLog, addLog, updateLog } from "@/api/trial/log";
 
 export default {
   name: "Log",
+  dicts: ['print_type'],
   data() {
     return {
       // 遮罩层

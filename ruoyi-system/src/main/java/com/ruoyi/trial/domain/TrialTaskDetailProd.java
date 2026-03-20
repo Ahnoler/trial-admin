@@ -134,6 +134,11 @@ public class TrialTaskDetailProd extends BaseEntity {
     @Excel(name = "状态", readConverterExp = "0=正常,1=停用")
     private String status;
 
+    /**
+     * 乐观锁版本号
+     */
+    private Integer version;
+
     private String urlType;
 
     private String shuntQty;
@@ -312,6 +317,7 @@ public class TrialTaskDetailProd extends BaseEntity {
                 .append("meDirectorTel", getMeDirectorTel())
                 .append("notes", getNotes())
                 .append("status", getStatus())
+                .append("version", getVersion())
                 .append("createBy", getCreateBy())
                 .append("createTime", getCreateTime())
                 .append("updateBy", getUpdateBy())

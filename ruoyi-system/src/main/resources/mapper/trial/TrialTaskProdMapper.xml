@@ -26,6 +26,7 @@
         <result property="remark" column="remark"/>
         <result property="qrCode" column="qr_code"/>
         <result property="qrCodeUrl" column="qr_code_url"/>
+        <result property="version" column="version"/>
     </resultMap>
 
     <sql id="selectTrialTaskProdVo">
@@ -49,7 +50,8 @@
                update_time,
                remark,
                qr_code,
-               qr_code_url
+               qr_code_url,
+               version
         from trial_task_prod
     </sql>
 
@@ -105,6 +107,7 @@
             <if test="remark != null">remark,</if>
             <if test="qrCode != null">qr_code,</if>
             <if test="qrCodeUrl != null">qr_code_url,</if>
+            version,
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="projectId != null">#{projectId},</if>
@@ -127,6 +130,7 @@
             <if test="remark != null">#{remark},</if>
             <if test="qrCode != null">#{qrCode},</if>
             <if test="qrCodeUrl != null">#{qrCodeUrl},</if>
+            0,
         </trim>
     </insert>
 
@@ -153,6 +157,7 @@
             <if test="remark != null">remark = #{remark},</if>
             <if test="qrCode != null">qr_code = #{qrCode},</if>
             <if test="qrCodeUrl != null">qr_code_url = #{qrCodeUrl},</if>
+            version = version + 1,
         </trim>
         where task_id = #{taskId}
     </update>
@@ -183,5 +188,20 @@
     <select id="selectTrialTaskProdWithoutQrCode" resultMap="TrialTaskProdResult">
         <include refid="selectTrialTaskProdVo"/>
         where qr_code IS NULL OR qr_code = ''
+    </select>
+
+    <select id="selectOverdueTrialTaskProd" resultMap="TrialTaskProdResult">
+        <include refid="selectTrialTaskProdVo"/>
+        where status = '0'
+        and (
+            project_id in (
+                select id from projects where end_date &lt; CURDATE() and status = 0 
+                and (project_status is null or project_status not in ('已完成', 'completed', '3'))
+            )
+            or (
+                create_time &lt; DATE_SUB(CURDATE(), INTERVAL 30 DAY)
+                and current_serial_no is not null
+            )
+        )
     </select>
 </mapper>

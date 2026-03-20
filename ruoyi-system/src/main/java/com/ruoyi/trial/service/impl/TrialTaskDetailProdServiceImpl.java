@@ -1,6 +1,7 @@
 package com.ruoyi.trial.service.impl;
 
 import java.util.List;
+import com.ruoyi.common.exception.OptimisticLockException;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.trial.domain.TrialTaskProd;
 import com.ruoyi.trial.mapper.CardColumnHeaderMapper;
@@ -78,7 +79,11 @@ public class TrialTaskDetailProdServiceImpl implements ITrialTaskDetailProdServi
     public int updateTrialTaskDetailProd(TrialTaskDetailProd trialTaskDetailProd)
     {
         trialTaskDetailProd.setUpdateTime(DateUtils.getNowDate());
-        return trialTaskDetailProdMapper.updateTrialTaskDetailProd(trialTaskDetailProd);
+        int rows = trialTaskDetailProdMapper.updateTrialTaskDetailProd(trialTaskDetailProd);
+        if (rows == 0) {
+            throw new OptimisticLockException("试制任务程序已被其他用户修改，请刷新后重试");
+        }
+        return rows;
     }
 
     /**
@@ -108,7 +113,10 @@ public class TrialTaskDetailProdServiceImpl implements ITrialTaskDetailProdServi
             return 0;
         }
         currentProd.setStatus("3");
-        trialTaskDetailProdMapper.updateTrialTaskDetailProd(currentProd);
+        int rows = trialTaskDetailProdMapper.updateTrialTaskDetailProd(currentProd);
+        if (rows == 0) {
+            throw new OptimisticLockException("试制任务程序已被其他用户修改，请刷新后重试");
+        }
 
         TrialTaskDetailProd queryParam = new TrialTaskDetailProd();
         queryParam.setTaskId(currentProd.getTaskId());
@@ -119,13 +127,19 @@ public class TrialTaskDetailProdServiceImpl implements ITrialTaskDetailProdServi
             if (list.get(i).getId().equals(id) && i < list.size() - 1) {
                 TrialTaskDetailProd nextProd = list.get(i + 1);
                 nextProd.setStatus("1");
-                trialTaskDetailProdMapper.updateTrialTaskDetailProd(nextProd);
+                int nextRows = trialTaskDetailProdMapper.updateTrialTaskDetailProd(nextProd);
+                if (nextRows == 0) {
+                    throw new OptimisticLockException("试制任务程序已被其他用户修改，请刷新后重试");
+                }
 
                 TrialTaskProd trialTaskProd = trialTaskProdMapper.selectTrialTaskProdByTaskId(currentProd.getTaskId());
                 if (trialTaskProd != null) {
                     trialTaskProd.setCurrentSerialNo(nextProd.getSerialNo());
                     trialTaskProd.setCurrentSerialName(nextProd.getProgram());
-                    trialTaskProdMapper.updateTrialTaskProd(trialTaskProd);
+                    int taskRows = trialTaskProdMapper.updateTrialTaskProd(trialTaskProd);
+                    if (taskRows == 0) {
+                        throw new OptimisticLockException("试制任务信息已被其他用户修改，请刷新后重试");
+                    }
                 }
                 break;
             }

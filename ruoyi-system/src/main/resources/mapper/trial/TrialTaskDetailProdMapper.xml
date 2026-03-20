@@ -29,6 +29,7 @@
         <result property="updateBy" column="update_by"/>
         <result property="updateTime" column="update_time"/>
         <result property="remark" column="remark"/>
+        <result property="version" column="version"/>
     </resultMap>
 
     <sql id="selectTrialTaskDetailProdVo">
@@ -56,7 +57,8 @@
                create_time,
                update_by,
                update_time,
-               remark
+               remark,
+               version
         from trial_task_detail_prod
     </sql>
 
@@ -207,6 +209,7 @@
             <if test="remark != null">
                 remark,
             </if>
+            version,
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="taskId != null">
@@ -281,6 +284,7 @@
             <if test="remark != null">
                 #{remark},
             </if>
+            0,
         </trim>
     </insert>
 
@@ -359,6 +363,7 @@
             <if test="remark != null">
                 remark = #{remark},
             </if>
+            version = version + 1,
         </trim>
         where id = #{id}
     </update>
@@ -381,7 +386,7 @@
         insert into trial_task_detail_prod(task_id, card_type, column_code, serial_no, program, name, figure,
                                            trial_quantity, inspection_quantity, manufacturing_quality_status,
                                            manufacturing_area, director, director_tel, process_quality_status,
-                                           me_director, me_director_tel, notes, images, status) values
+                                           me_director, me_director_tel, notes, images, status, version) values
         <foreach item="item" index="index" collection="list" separator=",">
             (#{item.taskId},
              #{item.cardType},
@@ -401,7 +406,8 @@
              #{item.meDirectorTel},
              #{item.notes},
              #{item.images},
-             #{item.status})
+             #{item.status},
+             0)
         </foreach>
     </insert>
 

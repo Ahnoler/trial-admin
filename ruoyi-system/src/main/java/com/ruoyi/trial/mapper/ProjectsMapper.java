@@ -58,4 +58,11 @@ public interface ProjectsMapper
      * @return 结果
      */
     public int deleteProjectsByIds(Long[] ids);
+
+    /**
+     * 查询超期项目列表（项目结束日期已过但未完成）
+     * 
+     * @return 超期项目集合
+     */
+    public List<Projects> selectOverdueProjects();
 }
