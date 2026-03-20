@@ -159,6 +159,18 @@
         <el-button @click="handleOpen = false">取 消</el-button>
       </div>
     </el-dialog>
+
+    <el-dialog title="忽略预警" :visible.sync="ignoreOpen" width="500px" append-to-body>
+      <el-form ref="ignoreForm" :model="ignoreForm" label-width="100px">
+        <el-form-item label="忽略原因">
+          <el-input v-model="ignoreForm.handleRemark" type="textarea" :rows="3" placeholder="请输入忽略原因（可选）" />
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="submitIgnore">确 定</el-button>
+        <el-button @click="ignoreOpen = false">取 消</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -187,6 +199,7 @@ export default {
       title: "",
       open: false,
       handleOpen: false,
+      ignoreOpen: false,
       queryParams: {
         pageNum: 1,
         pageSize: 10,
@@ -197,6 +210,10 @@ export default {
       },
       form: {},
       handleForm: {
+        alertIds: [],
+        handleRemark: ""
+      },
+      ignoreForm: {
         alertIds: [],
         handleRemark: ""
       }
@@ -295,20 +312,25 @@ export default {
       });
     },
     handleIgnore() {
-      this.handleForm = {
+      this.ignoreForm = {
         alertIds: this.ids,
         handleRemark: ""
       };
-      this.handleOpen = true;
+      this.ignoreOpen = true;
     },
     handleIgnoreSingle(row) {
-      const alertId = row.alertId;
-      this.$modal.confirm('是否确认忽略该预警？').then(() => {
-        return ignoreOverdueAlert([alertId], "");
-      }).then(() => {
-        this.getList();
+      this.ignoreForm = {
+        alertIds: [row.alertId],
+        handleRemark: ""
+      };
+      this.ignoreOpen = true;
+    },
+    submitIgnore() {
+      ignoreOverdueAlert(this.ignoreForm.alertIds, this.ignoreForm.handleRemark).then(response => {
         this.$modal.msgSuccess("忽略成功");
-      }).catch(() => { });
+        this.ignoreOpen = false;
+        this.getList();
+      });
     },
     handleDelete(row) {
       const alertIds = row.alertId || this.ids;

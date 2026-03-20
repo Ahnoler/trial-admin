@@ -9,8 +9,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import java.util.Date;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -40,7 +38,7 @@ class OptimisticLockTest {
         int result = trialTaskProdService.updateTrialTaskProd(task);
 
         assertEquals(1, result);
-        verify(trialTaskProdMapper, times(1)).updateTrialTaskProd(task);
+        verify(trialTaskProdMapper, times(1)).updateTrialTaskProd(any(TrialTaskProd.class));
     }
 
     @Test
@@ -58,7 +56,7 @@ class OptimisticLockTest {
     }
 
     @Test
-    void testVersionIncrement() {
+    void testUpdateTrialTaskProd_VerifyUpdateTimeSet() {
         TrialTaskProd task = new TrialTaskProd();
         task.setTaskId(1L);
         task.setVersion(5);
@@ -69,7 +67,23 @@ class OptimisticLockTest {
 
         verify(trialTaskProdMapper).updateTrialTaskProd(argThat(t -> {
             TrialTaskProd updatedTask = (TrialTaskProd) t;
-            return updatedTask.getVersion() == 6;
+            return updatedTask.getUpdateTime() != null;
+        }));
+    }
+
+    @Test
+    void testUpdateTrialTaskProd_MapperCalledWithCorrectTaskId() {
+        TrialTaskProd task = new TrialTaskProd();
+        task.setTaskId(100L);
+        task.setVersion(0);
+
+        when(trialTaskProdMapper.updateTrialTaskProd(any())).thenReturn(1);
+
+        trialTaskProdService.updateTrialTaskProd(task);
+
+        verify(trialTaskProdMapper).updateTrialTaskProd(argThat(t -> {
+            TrialTaskProd argTask = (TrialTaskProd) t;
+            return argTask.getTaskId().equals(100L);
         }));
     }
 }

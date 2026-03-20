@@ -1,6 +1,7 @@
 package com.ruoyi.trial.service.impl;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import com.ruoyi.common.utils.DateUtils;
@@ -184,15 +185,34 @@ public class OverdueAlertServiceImpl implements IOverdueAlertService
         
         Projects project = projectsMapper.selectProjectsById(task.getProjectId());
         String projectName = project != null ? project.getProjectName() : "";
-        Date expectedDate = project != null ? project.getEndDate() : task.getCreateTime();
 
-        int overdueDays = calculateOverdueDays(expectedDate);
+        boolean isProjectOverdue = project != null 
+            && project.getEndDate() != null 
+            && project.getEndDate().before(new Date());
+        
+        Date expectedDate;
+        int overdueDays;
+        
+        if (isProjectOverdue)
+        {
+            expectedDate = project.getEndDate();
+            overdueDays = calculateOverdueDays(expectedDate);
+        }
+        else
+        {
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(task.getCreateTime());
+            calendar.add(Calendar.DAY_OF_MONTH, 30);
+            expectedDate = calendar.getTime();
+            overdueDays = calculateOverdueDays(expectedDate);
+        }
 
         if (existingAlert != null)
         {
             existingAlert.setOverdueDays(overdueDays);
             existingAlert.setAlertLevel(determineAlertLevel(overdueDays));
-            existingAlert.setAlertContent(buildTaskAlertContent(task, overdueDays));
+            existingAlert.setExpectedDate(expectedDate);
+            existingAlert.setAlertContent(buildTaskAlertContent(task, overdueDays, isProjectOverdue));
             existingAlert.setUpdateTime(new Date());
             overdueAlertMapper.updateOverdueAlert(existingAlert);
             return false;
@@ -208,7 +228,7 @@ public class OverdueAlertServiceImpl implements IOverdueAlertService
         alert.setAlertStatus(ALERT_STATUS_PENDING);
         alert.setOverdueDays(overdueDays);
         alert.setExpectedDate(expectedDate);
-        alert.setAlertContent(buildTaskAlertContent(task, overdueDays));
+        alert.setAlertContent(buildTaskAlertContent(task, overdueDays, isProjectOverdue));
         alert.setCreateBy("system");
         alert.setCreateTime(new Date());
         
@@ -247,11 +267,18 @@ public class OverdueAlertServiceImpl implements IOverdueAlertService
         return content.toString();
     }
 
-    private String buildTaskAlertContent(TrialTaskProd task, int overdueDays)
+    private String buildTaskAlertContent(TrialTaskProd task, int overdueDays, boolean isProjectOverdue)
     {
         StringBuilder content = new StringBuilder();
         content.append("流转卡【").append(task.getTitle()).append("】");
-        content.append("已超期 ").append(overdueDays).append(" 天，");
+        if (isProjectOverdue)
+        {
+            content.append("因项目超期已超期 ").append(overdueDays).append(" 天，");
+        }
+        else
+        {
+            content.append("创建已超过30天，超期 ").append(overdueDays).append(" 天，");
+        }
         content.append("当前程序：").append(task.getCurrentSerialName() != null ? task.getCurrentSerialName() : "未知");
         if (task.getPm() != null)
         {
