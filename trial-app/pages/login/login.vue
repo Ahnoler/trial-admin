@@ -60,6 +60,7 @@
 
 <script>
 import { useUserStore } from '@/store/user.js'
+import config from '@/config/index.js'
 
 export default {
 	data() {
@@ -85,7 +86,7 @@ export default {
 		async getCode() {
 			try {
 				const res = await uni.request({
-					url: 'http://localhost:8080/captchaImage',
+					url: config.BASE_URL + '/captchaImage',
 					method: 'GET'
 				})
 				

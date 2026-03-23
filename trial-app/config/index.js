@@ -1,4 +1,4 @@
-const BASE_URL = 'http://localhost:8080'
+const BASE_URL = 'http://172.20.100.14:8080'
 
 export default {
 	BASE_URL,

@@ -127,9 +127,8 @@ export default {
 					})
 					break
 				case 'password':
-					uni.showToast({
-						title: '功能开发中',
-						icon: 'none'
+					uni.navigateTo({
+						url: '/pages/password/password'
 					})
 					break
 				case 'feedback':
