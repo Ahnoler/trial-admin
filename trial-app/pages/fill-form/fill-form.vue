@@ -297,6 +297,78 @@ export default {
 				return false
 			}
 			
+			if (!this.formData.manufacturingQualityStatus) {
+				uni.showToast({
+					title: '请选择制造质量状态',
+					icon: 'none'
+				})
+				return false
+			}
+			
+			if (!this.formData.processQualityStatus) {
+				uni.showToast({
+					title: '请选择工艺质量状态',
+					icon: 'none'
+				})
+				return false
+			}
+			
+			if (!this.formData.manufacturingArea) {
+				uni.showToast({
+					title: '请输入制造区域',
+					icon: 'none'
+				})
+				return false
+			}
+			
+			if (!this.formData.director) {
+				uni.showToast({
+					title: '请输入负责人',
+					icon: 'none'
+				})
+				return false
+			}
+			
+			if (!this.formData.directorTel) {
+				uni.showToast({
+					title: '请输入负责人电话',
+					icon: 'none'
+				})
+				return false
+			}
+			
+			if (!this.formData.meDirector) {
+				uni.showToast({
+					title: '请输入责任ME',
+					icon: 'none'
+				})
+				return false
+			}
+			
+			if (!this.formData.meDirectorTel) {
+				uni.showToast({
+					title: '请输入ME联系电话',
+					icon: 'none'
+				})
+				return false
+			}
+			
+			if (!this.formData.figure) {
+				uni.showToast({
+					title: '请输入图号',
+					icon: 'none'
+				})
+				return false
+			}
+			
+			if (!this.formData.notes) {
+				uni.showToast({
+					title: '请输入备注说明',
+					icon: 'none'
+				})
+				return false
+			}
+			
 			return true
 		},
 		
