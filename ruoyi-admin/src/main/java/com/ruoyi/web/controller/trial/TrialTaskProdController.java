@@ -23,6 +23,7 @@ import com.ruoyi.trial.domain.TrialTaskProd;
 import com.ruoyi.trial.service.ITrialTaskProdService;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.common.core.page.TableDataInfo;
+import com.ruoyi.trial.domain.TaskStatus;
 
 /**
  * 试制任务信息Controller
@@ -54,7 +55,7 @@ public class TrialTaskProdController extends BaseController {
     @Log(title = "试制任务信息", businessType = BusinessType.UPDATE)
     public AjaxResult edit(@RequestBody TrialTaskProd trialTaskProd) {
         TrialTaskProd oldNode = trialTaskProdService.selectTrialTaskProdByTaskId(trialTaskProd.getTaskId());
-        if ("2".equals(oldNode.getStatus())) {
+        if (TaskStatus.FINISHED.getCode().equals(oldNode.getStatus())) {
             return AjaxResult.error("任务已结束，无法修改");
         }
         return toAjax(trialTaskProdService.updateTrialTaskProd(trialTaskProd));
@@ -137,7 +138,7 @@ public class TrialTaskProdController extends BaseController {
     public AjaxResult over(@RequestBody TrialTaskProd trialTaskProd) {
         TrialTaskProd oldNode = trialTaskProdService.selectTrialTaskProdByTaskId(trialTaskProd.getTaskId());
         // 把任务置为结束状态
-        oldNode.setStatus("2");
+        oldNode.setStatus(TaskStatus.FINISHED.getCode());
         return toAjax(trialTaskProdService.updateTrialTaskProd(oldNode));
     }
 
@@ -181,7 +182,7 @@ public class TrialTaskProdController extends BaseController {
         if (task == null) {
             return AjaxResult.error("未找到对应的流转卡，请检查二维码是否正确");
         }
-        if ("2".equals(task.getStatus())) {
+        if (TaskStatus.FINISHED.getCode().equals(task.getStatus())) {
             return AjaxResult.error("该流转卡已结束，无法进行操作");
         }
         return success(task);

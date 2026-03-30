@@ -25,6 +25,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ruoyi.trial.mapper.TrialTaskProdMapper;
 import com.ruoyi.trial.domain.TrialTaskProd;
+import com.ruoyi.trial.domain.TaskStatus;
+import com.ruoyi.trial.domain.ProcessStatus;
 import com.ruoyi.trial.service.ITrialTaskProdService;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -209,13 +211,13 @@ public class TrialTaskProdServiceImpl implements ITrialTaskProdService {
         for (int i = 0; i < list.size(); i++) {
             TrialTaskDetailProd currentNode = list.get(i);
             if (currentNode.getSerialNo() < trialTaskProd.getCurrentSerialNo()) {
-                currentNode.setStatus("3");//已审核
+                currentNode.setStatus(ProcessStatus.APPROVED.getCode());//已审核
                 trialTaskDetailProdMapper.updateTrialTaskDetailProd(currentNode);
             } else if (currentNode.getSerialNo().intValue() == trialTaskProd.getCurrentSerialNo().intValue()) {
-                currentNode.setStatus("1");//正在填报
+                currentNode.setStatus(ProcessStatus.FILLING.getCode());//正在填报
                 trialTaskDetailProdMapper.updateTrialTaskDetailProd(currentNode);
             } else if (currentNode.getSerialNo() > trialTaskProd.getCurrentSerialNo()) {
-                currentNode.setStatus("0");//未填报
+                currentNode.setStatus(ProcessStatus.NOT_FILLED.getCode());//未填报
                 trialTaskDetailProdMapper.updateTrialTaskDetailProd(currentNode);
             }
         }
@@ -273,11 +275,11 @@ public class TrialTaskProdServiceImpl implements ITrialTaskProdService {
             Integer currentSerialNo = parentTask.getCurrentSerialNo();
             for (TrialTaskDetailProd process : allProcesses) {
                 if (process.getSerialNo() < currentSerialNo) {
-                    process.setStatus("3"); // 已审核
+                    process.setStatus(ProcessStatus.APPROVED.getCode()); // 已审核
                 } else if (process.getSerialNo().intValue() == currentSerialNo.intValue()) {
-                    process.setStatus("1"); // 正在填报
+                    process.setStatus(ProcessStatus.FILLING.getCode()); // 正在填报
                 } else if (process.getSerialNo() > currentSerialNo) {
-                    process.setStatus("0"); // 未填报
+                    process.setStatus(ProcessStatus.NOT_FILLED.getCode()); // 未填报
                 }
                 trialTaskDetailProdMapper.updateTrialTaskDetailProd(process);
             }
@@ -365,7 +367,7 @@ public class TrialTaskProdServiceImpl implements ITrialTaskProdService {
     public int flowTrialTaskProd(TrialTaskProd trialTaskProd, String userId) {
         TrialTaskProd oldNode = selectTrialTaskProdByTaskId(trialTaskProd.getTaskId());
 
-        if ("2".equals(oldNode.getStatus())) {
+        if (TaskStatus.FINISHED.getCode().equals(oldNode.getStatus())) {
             throw new RuntimeException("任务已结束，无法变更程序");
         }
 
@@ -617,7 +619,7 @@ public class TrialTaskProdServiceImpl implements ITrialTaskProdService {
     @Override
     public int forkTrialTaskProdWithLog(TrialTaskProd trialTaskProd, String userId) {
         TrialTaskProd oldNode = selectTrialTaskProdByTaskId(trialTaskProd.getTaskId());
-        if ("2".equals(oldNode.getStatus())) {
+        if (TaskStatus.FINISHED.getCode().equals(oldNode.getStatus())) {
             throw new RuntimeException("任务已结束，无法分流");
         }
 

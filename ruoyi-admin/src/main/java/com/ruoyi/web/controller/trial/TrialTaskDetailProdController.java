@@ -25,6 +25,8 @@ import com.ruoyi.trial.domain.TrialTaskDetailProd;
 import com.ruoyi.trial.service.ITrialTaskDetailProdService;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.common.core.page.TableDataInfo;
+import com.ruoyi.trial.domain.TaskStatus;
+import com.ruoyi.trial.domain.ProcessStatus;
 
 /**
  * 试制任务程序Controller
@@ -52,7 +54,7 @@ public class TrialTaskDetailProdController extends BaseController {
     @ApiOperation(value = "修改流转程序")
     public AjaxResult edit(@RequestBody TrialTaskDetailProd trialTaskDetailProd) {
         TrialTaskProd taskProd = trialTaskProdService.selectTrialTaskProdByTaskId(trialTaskDetailProd.getTaskId());
-        if ("2".equals(taskProd.getStatus())) {
+        if (TaskStatus.FINISHED.getCode().equals(taskProd.getStatus())) {
             return AjaxResult.error("任务已结束，无法修改");
         }
         return toAjax(trialTaskDetailProdService.updateTrialTaskDetailProd(trialTaskDetailProd));
@@ -101,14 +103,14 @@ public class TrialTaskDetailProdController extends BaseController {
         if (currentProd == null) {
             return AjaxResult.error("未找到该流转程序");
         }
-        if (!"1".equals(currentProd.getStatus())) {
+        if (!ProcessStatus.FILLING.getCode().equals(currentProd.getStatus())) {
             return AjaxResult.error("只有正在填报状态的流转程序才能申请");
         }
         TrialTaskProd taskProd = trialTaskProdService.selectTrialTaskProdByTaskId(currentProd.getTaskId());
-        if (taskProd != null && "2".equals(taskProd.getStatus())) {
+        if (taskProd != null && TaskStatus.FINISHED.getCode().equals(taskProd.getStatus())) {
             return AjaxResult.error("任务已结束，无法申请");
         }
-        currentProd.setStatus("2");
+        currentProd.setStatus(ProcessStatus.SUBMITTED.getCode());
         return toAjax(trialTaskDetailProdService.updateTrialTaskDetailProd(currentProd));
     }
 
@@ -126,7 +128,7 @@ public class TrialTaskDetailProdController extends BaseController {
             return AjaxResult.error("未找到该流转程序");
         }
         TrialTaskProd taskProd = trialTaskProdService.selectTrialTaskProdByTaskId(currentProd.getTaskId());
-        if (taskProd != null && "2".equals(taskProd.getStatus())) {
+        if (taskProd != null && TaskStatus.FINISHED.getCode().equals(taskProd.getStatus())) {
             return AjaxResult.error("任务已结束，无法审核");
         }
         return toAjax(trialTaskDetailProdService.approveTrialTaskDetailProdById(trialTaskDetailProd.getId()));

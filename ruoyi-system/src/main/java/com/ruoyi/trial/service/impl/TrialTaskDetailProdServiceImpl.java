@@ -4,6 +4,8 @@ import java.util.List;
 import com.ruoyi.common.exception.OptimisticLockException;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.trial.domain.TrialTaskProd;
+import com.ruoyi.trial.domain.TaskStatus;
+import com.ruoyi.trial.domain.ProcessStatus;
 import com.ruoyi.trial.mapper.CardColumnHeaderMapper;
 import com.ruoyi.trial.mapper.TrialTaskProdMapper;
 import com.ruoyi.trial.service.ICardColumnHeaderService;
@@ -109,10 +111,10 @@ public class TrialTaskDetailProdServiceImpl implements ITrialTaskDetailProdServi
         if (currentProd == null) {
             return 0;
         }
-        if (!"2".equals(currentProd.getStatus())) {
+        if (!ProcessStatus.SUBMITTED.getCode().equals(currentProd.getStatus())) {
             return 0;
         }
-        currentProd.setStatus("3");
+        currentProd.setStatus(ProcessStatus.APPROVED.getCode());
         int rows = trialTaskDetailProdMapper.updateTrialTaskDetailProd(currentProd);
         if (rows == 0) {
             throw new OptimisticLockException("试制任务程序已被其他用户修改，请刷新后重试");
@@ -126,7 +128,7 @@ public class TrialTaskDetailProdServiceImpl implements ITrialTaskDetailProdServi
         for (int i = 0; i < list.size(); i++) {
             if (list.get(i).getId().equals(id) && i < list.size() - 1) {
                 TrialTaskDetailProd nextProd = list.get(i + 1);
-                nextProd.setStatus("1");
+                nextProd.setStatus(ProcessStatus.FILLING.getCode());
                 int nextRows = trialTaskDetailProdMapper.updateTrialTaskDetailProd(nextProd);
                 if (nextRows == 0) {
                     throw new OptimisticLockException("试制任务程序已被其他用户修改，请刷新后重试");

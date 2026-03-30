@@ -148,6 +148,13 @@
                 <version>3.5.1</version>
             </dependency>
 
+            <!-- 腾讯云短信SDK -->
+            <dependency>
+                <groupId>com.tencentcloudapi</groupId>
+                <artifactId>tencentcloud-sdk-java</artifactId>
+                <version>3.1.756</version>
+            </dependency>
+
             <!-- 定时任务-->
             <dependency>
                 <groupId>com.ruoyi</groupId>
