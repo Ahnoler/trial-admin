@@ -161,6 +161,74 @@ export const dynamicRoutes = [
         meta: { title: '修改生成配置', activeMenu: '/tool/gen' }
       }
     ]
+  },
+  {
+    path: '/trial/prod-add',
+    component: Layout,
+    hidden: true,
+    permissions: ['trial:prod:add', 'trial:prod:edit'],
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/trial/prod/addProd'),
+        name: 'TrialProdAdd',
+        meta: { title: '新增试制任务', activeMenu: '/trial/prod' }
+      },
+      {
+        path: 'index/:taskId(\\d+)',
+        component: () => import('@/views/trial/prod/addProd'),
+        name: 'TrialProdEdit',
+        meta: { title: '编辑试制任务', activeMenu: '/trial/prod' }
+      }
+    ]
+  },
+  {
+    path: '/trial/prodDetail-add',
+    component: Layout,
+    hidden: true,
+    permissions: ['trial:prod:detail:add', 'trial:prod:detail:edit'],
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/trial/prodDetail/addProdDetail'),
+        name: 'TrialProdDetailAdd',
+        meta: { title: '新增试制任务程序', activeMenu: '/trial/prodDetail' }
+      },
+      {
+        path: 'index/:id(\\d+)',
+        component: () => import('@/views/trial/prodDetail/addProdDetail'),
+        name: 'TrialProdDetailEdit',
+        meta: { title: '编辑试制任务程序', activeMenu: '/trial/prodDetail' }
+      }
+    ]
+  },
+  {
+    path: '/trial/prod-selectFlow',
+    component: Layout,
+    hidden: true,
+    permissions: ['trial:projects:edit'],
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/trial/prod/selectFlow'),
+        name: 'TrialProdSelectFlow',
+        meta: { title: '流转变更', activeMenu: '/trial/prod' }
+      }
+    ]
+  },
+  {
+    path: '/trial/prod-selectFork',
+    component: Layout,
+    hidden: true,
+    permissions: ['trial:projects:edit'],
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/trial/prod/selectFork'),
+        name: 'TrialProdSelectFork',
+        meta: { title: '分流', activeMenu: '/trial/prod' }
+      }
+    ]
   }
 ]
 

@@ -1,6 +1,7 @@
 <template>
-  <!-- 授权项目 -->
-  <el-dialog title="选择项目" :visible.sync="visible" width="800px" top="5vh" append-to-body>
+  <div>
+    <!-- 授权项目 -->
+    <el-dialog title="选择项目" :visible.sync="visible" width="800px" top="5vh" append-to-body>
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true">
       <el-form-item label="项目名称" prop="projectName">
       	<el-input v-model="queryParams.projectName" placeholder="请输入项目名称" clearable
@@ -25,7 +26,7 @@
       
     </el-form>
     <el-row>
-      <el-table @row-click="clickRow" ref="table" :data="projectList" @selection-change="handleSelectionChange" height="260px">
+      <el-table @row-click="clickRow" ref="table" :data="projectList" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" align="center" />
         <el-table-column label="序号" align="center" prop="id" />
         <el-table-column label="项目名称" align="center" prop="projectName" />
@@ -41,7 +42,19 @@
         			@change="handleStatusChange(scope.row)"></el-switch>
         	</template>
         </el-table-column>
-        <el-table-column label="备注" align="center" prop="remark" />
+        <el-table-column label="备注" align="center" prop="remark">
+          <template slot-scope="scope">
+            <el-link
+              v-if="scope.row.remark"
+              type="primary"
+              :underline="false"
+              @click.stop="openRemark(scope.row.remark)"
+            >
+              {{ shortRemark(scope.row.remark) }}
+            </el-link>
+            <span v-else>-</span>
+          </template>
+        </el-table-column>
       </el-table>
       <pagination
         v-show="total>0"
@@ -55,7 +68,20 @@
       <el-button type="primary" @click="handleSelectProject">确 定</el-button>
       <el-button @click="visible = false">取 消</el-button>
     </div>
-  </el-dialog>
+    </el-dialog>
+
+    <el-dialog
+      title="备注详情"
+      :visible.sync="remarkDialogVisible"
+      width="420px"
+      append-to-body
+    >
+      <div class="select-project-remark-detail">{{ remarkDetail }}</div>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="remarkDialogVisible = false">关 闭</el-button>
+      </div>
+    </el-dialog>
+  </div>
 </template>
 
 <script>
@@ -72,6 +98,8 @@ export default {
     return {
       // 遮罩层
       visible: false,
+      remarkDialogVisible: false,
+      remarkDetail: "",
       // 选中数组值
       projectIds: [],
 	  projectNames: [],
@@ -99,6 +127,15 @@ export default {
     },
     clickRow(row) {
       this.$refs.table.toggleRowSelection(row);
+    },
+    shortRemark(remark) {
+      const s = String(remark || "");
+      if (s.length <= 6) return s;
+      return s.slice(0, 6) + "...";
+    },
+    openRemark(remark) {
+      this.remarkDetail = String(remark || "");
+      this.remarkDialogVisible = true;
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
@@ -152,3 +189,13 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+.select-project-remark-detail {
+  white-space: pre-wrap;
+  word-break: break-word;
+  max-height: 50vh;
+  overflow: auto;
+  line-height: 1.6;
+}
+</style>

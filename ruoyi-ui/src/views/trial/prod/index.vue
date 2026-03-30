@@ -60,7 +60,7 @@
 					v-hasPermi="['trial:prod:add']">新增</el-button>
 			</el-col>
 			<el-col :span="1.5">
-				<el-button type="success" plain icon="el-icon-edit" size="mini" :disabled="single" @click="handleUpdate"
+				<el-button type="success" plain icon="el-icon-edit" size="mini" :disabled="single || isStoppedOrFinishedSelected" @click="handleUpdate"
 					v-hasPermi="['trial:prod:edit']">修改</el-button>
 			</el-col>
 			<el-col :span="1.5">
@@ -72,16 +72,16 @@
 					v-hasPermi="['trial:prod:export']">导出EXCEL</el-button>
 			</el-col>
 			<el-col :span="1.5">
-				<el-button type="danger" plain icon="el-icon-d-caret" size="mini" @click="openFlowProject" :disabled="single"
+				<el-button type="danger" plain icon="el-icon-d-caret" size="mini" @click="openFlowProject" :disabled="single || isStoppedOrFinishedSelected"
 					v-hasPermi="['trial:projects:edit']">变更</el-button>
 			</el-col>
 			<el-col :span="1.5">
-				<el-button type="success" plain icon="el-icon-share" size="mini" @click="openForkProject" :disabled="single"
+				<el-button type="success" plain icon="el-icon-share" size="mini" @click="openForkProject" :disabled="single || isStoppedOrFinishedSelected"
 					v-hasPermi="['trial:projects:edit']">分流</el-button>
 			</el-col>
 			<el-col :span="1.5">
 				<el-button type="warning" plain icon="el-icon-switch-button" size="mini" @click="openCloseProject"
-					:disabled="single" v-hasPermi="['trial:projects:edit']">结束</el-button>
+					:disabled="single || isStoppedOrFinishedSelected" v-hasPermi="['trial:projects:edit']">结束</el-button>
 			</el-col>
 			<el-col :span="1.5">
 				<el-button type="info" plain icon="el-icon-s-operation" size="mini" @click="openRelatedProject"
@@ -123,52 +123,7 @@
 
 		<pagination v-show="total>0" :total="total" :page.sync="queryParams.pageNum" :limit.sync="queryParams.pageSize"
 			@pagination="getList" />
-
-		<!-- 添加或修改试制任务信息对话框 -->
-		<el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
-			<el-form ref="form" :model="form" :rules="rules" label-width="120px">
-				<el-form-item label="所属项目" prop="projectName">
-					<el-input v-model="form.projectId" v-show="false" placeholder="请输入项目管理编号" />
-					<el-input v-model="form.projectName" placeholder="请选择所属项目" style="width:60%;float: left;" disabled />
-					<el-button type="primary" style="line-height:20px; width:40%;float: right;" plain icon="el-icon-plus"
-						size="mini" @click="openSelectProject" v-hasPermi="['trial:projects:add']">请选择所属项目</el-button>
-
-				</el-form-item>
-				<el-form-item label="卡片名称" prop="title">
-					<el-input v-model="form.title" placeholder="请输入卡片名称" />
-				</el-form-item>
-
-				<el-form-item label="车型" prop="carType">
-					<el-select v-model="form.carType" placeholder="请选择车型">
-						<el-option v-for="dict in dict.type.car_type" :key="dict.value" :label="dict.label"
-							:value="dict.value"></el-option>
-					</el-select>
-				</el-form-item>
-				<el-form-item label="总成名称" prop="assemblyName">
-					<el-input v-model="form.assemblyName" placeholder="请输入总成名称" />
-				</el-form-item>
-				<el-form-item label="总成图号" prop="assemblyFigure">
-					<el-input v-model="form.assemblyFigure" placeholder="请输入总成图号" />
-				</el-form-item>
-				<el-form-item label="试制管理员/电话" prop="pm">
-					<el-input v-model="form.pm" placeholder="请输入试制管理员/电话" />
-				</el-form-item>
-				<el-form-item label="PE姓名/电话" prop="pe">
-					<el-input v-model="form.pe" placeholder="请输入PE姓名/电话" />
-				</el-form-item>
-				<el-form-item label="备注" prop="remark">
-					<el-input v-model="form.remark" type="textarea" placeholder="请输入内容" />
-				</el-form-item>
-
-			</el-form>
-			<div slot="footer" class="dialog-footer">
-				<el-button type="primary" @click="submitForm">确 定</el-button>
-				<el-button @click="cancel">取 消</el-button>
-			</div>
-		</el-dialog>
 		<select-project ref="select" :pm="queryParams.pm" @ok="handleQueryProject" />
-		<selectFlow ref="flow" :taskId="taskId" @ok="handleFlowProject" />
-		<selectFork ref="fork" :taskId="taskId" @ok="handleForkProject" />
 		<selectRelated ref="related" :taskId="taskId" :title="''" />
 	</div>
 </template>
@@ -176,10 +131,7 @@
 <script>
 	import {
 		listProd,
-		getProd,
 		delProd,
-		addProd,
-		updateProd,
 		forkProd,
 		flowProd,
 		overProd,
@@ -188,8 +140,6 @@
 		printDetail
 	} from "@/api/trial/prod";
 	import selectProject from "./selectProject";
-import selectFlow from "./selectFlow";
-import selectFork from "./selectFork";
 import selectRelated from "./selectRelated";
 
 	export default {
@@ -197,8 +147,6 @@ import selectRelated from "./selectRelated";
 		dicts: ['car_type', 'sys_normal_disable', 'task_status'],
 		components: {
 		selectProject,
-		selectFlow,
-		selectFork,
 		selectRelated
 	},
 		data() {
@@ -218,10 +166,6 @@ import selectRelated from "./selectRelated";
 				total: 0,
 				// 试制任务信息表格数据
 				prodList: [],
-				// 弹出层标题
-				title: "",
-				// 是否显示弹出层
-				open: false,
 				// 查询参数
 				queryParams: {
 					pageNum: 1,
@@ -237,37 +181,37 @@ import selectRelated from "./selectRelated";
 					pe: null,
 					status: null,
 				},
-				// 表单参数
-				form: {},
-				// 表单校验
-				rules: {
-					projectId: [{
-						required: true,
-						message: "项目编号不能为空",
-						trigger: "blur"
-					}],
-				}
+				// 当前选中任务状态（0正常 1停用 2完成）
+				selectedStatus: null,
 			};
+		},
+		computed: {
+			isStoppedOrFinishedSelected() {
+				// 只有“单选”时才有意义；多选/未选中时保持 false
+				if (this.selectedStatus === null || this.selectedStatus === undefined) return false;
+				return String(this.selectedStatus) === "1" || String(this.selectedStatus) === "2";
+			}
 		},
 		created() {
 			this.getList();
 		},
+		activated() {
+			if (this.$route && this.$route.query && this.$route.query.t) {
+				this.getList();
+			}
+		},
 		methods: {
-			/** 打开所属项目表弹窗 */
-			openSelectProject() {
-				this.$refs.select.show();
-			},
 			/** 打开变更表弹窗 */
 			openFlowProject() {
 				this.taskId = this.ids[0];
 				console.log("openFlowProject" + this.taskId);
-				this.$refs.flow.show(this.taskId);
+				this.$router.push({ path: "/trial/prod-selectFlow/index", query: { taskId: this.taskId } });
 			},
 			/** 打开分流表弹窗 */
 			openForkProject() {
 				this.taskId = this.ids[0];
 				console.log("openForkProject" + this.taskId);
-				this.$refs.fork.show(this.taskId);
+				this.$router.push({ path: "/trial/prod-selectFork/index", query: { taskId: this.taskId } });
 			},
 			/** 结束任务 */
 			openCloseProject() {
@@ -367,34 +311,6 @@ import selectRelated from "./selectRelated";
 					this.loading = false;
 				});
 			},
-			// 取消按钮
-			cancel() {
-				this.open = false;
-				this.reset();
-			},
-			// 表单重置
-			reset() {
-				this.form = {
-					taskId: null,
-					projectId: null,
-					projectName: null,
-					cardType: null,
-					title: null,
-					carType: null,
-					assemblyName: null,
-					assemblyFigure: null,
-					pm: null,
-					pe: null,
-					status: null,
-					createBy: null,
-					createTime: null,
-					updateBy: null,
-					updateTime: null,
-					remark: null,
-					relatedTaskId: null
-				};
-				this.resetForm("form");
-			},
 			/** 搜索按钮操作 */
 			handleQuery() {
 				this.queryParams.pageNum = 1;
@@ -403,8 +319,6 @@ import selectRelated from "./selectRelated";
 			/** 搜索项目按钮操作 */
 			handleQueryProject(payload) {
 				console.log(payload)
-				this.form.projectId = payload.projectIds;
-				this.form.projectName = payload.projectNames;
 				//this.queryParams.pageNum = 1;
 				//this.getList();
 			},
@@ -432,22 +346,17 @@ import selectRelated from "./selectRelated";
 				this.ids = selection.map(item => item.taskId)
 				this.single = selection.length !== 1
 				this.multiple = !selection.length
+				this.selectedStatus = selection.length === 1 ? selection[0].status : null;
 			},
 			/** 新增按钮操作 */
 			handleAdd() {
-				this.reset();
-				this.open = true;
-				this.title = "添加试制任务信息";
+				this.$router.push({ path: "/trial/prod-add/index" });
 			},
 			/** 修改按钮操作 */
 			handleUpdate(row) {
-				this.reset();
-				const taskId = row.taskId || this.ids
-				getProd(taskId).then(response => {
-					this.form = response.data;
-					this.open = true;
-					this.title = "修改试制任务信息";
-				});
+				const taskId = row && row.taskId ? row.taskId : (this.ids && this.ids.length ? this.ids[0] : null);
+				if (!taskId) return;
+				this.$router.push({ path: `/trial/prod-add/index/${taskId}` });
 			},
 
 			/** 变更按钮操作 flowProd*/
@@ -466,26 +375,6 @@ import selectRelated from "./selectRelated";
 				forkProd(row).then(response => {
 					this.$modal.msgSuccess("分流成功");
 					this.handleQuery();
-				});
-			},
-			/** 提交按钮 */
-			submitForm() {
-				this.$refs["form"].validate(valid => {
-					if (valid) {
-						if (this.form.taskId != null) {
-							updateProd(this.form).then(response => {
-								this.$modal.msgSuccess("修改成功");
-								this.open = false;
-								this.getList();
-							});
-						} else {
-							addProd(this.form).then(response => {
-								this.$modal.msgSuccess("新增成功");
-								this.open = false;
-								this.getList();
-							});
-						}
-					}
 				});
 			},
 			/** 删除按钮操作 */
