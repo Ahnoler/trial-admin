@@ -62,6 +62,24 @@ export function overProd(data) {
   })
 }
 
+// 停用试制任务信息
+export function disableProd(data) {
+  return request({
+    url: '/trial/prod/disable',
+    method: 'post',
+    data: data
+  })
+}
+
+// 启用试制任务信息
+export function enableProd(data) {
+  return request({
+    url: '/trial/prod/enable',
+    method: 'post',
+    data: data
+  })
+}
+
 // 删除试制任务信息
 export function delProd(taskId) {
   return request({

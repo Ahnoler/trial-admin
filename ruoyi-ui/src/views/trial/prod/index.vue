@@ -51,6 +51,14 @@
 						<el-input v-model="queryParams.pe" placeholder="请输入PE姓名/电话" clearable @keyup.enter.native="handleQuery" />
 					</el-form-item>
 				</el-col>
+				<el-col :span="8">
+					<el-form-item label="任务状态" prop="status">
+						<el-select v-model="queryParams.status" placeholder="请选择任务状态" clearable style="width: 100%">
+							<el-option v-for="dict in dict.type.task_status" :key="dict.value" :label="dict.label"
+								:value="dict.value"></el-option>
+						</el-select>
+					</el-form-item>
+				</el-col>
 			</el-row>
 		</el-form>
 
@@ -78,6 +86,14 @@
 			<el-col :span="1.5">
 				<el-button type="success" plain icon="el-icon-share" size="mini" @click="openForkProject" :disabled="single || isStoppedOrFinishedSelected"
 					v-hasPermi="['trial:projects:edit']">分流</el-button>
+			</el-col>
+			<el-col :span="1.5">
+				<el-button type="warning" plain icon="el-icon-close" size="mini" @click="openDisableProject"
+					:disabled="disableBtnDisabled" v-hasPermi="['trial:prod:edit']">停用</el-button>
+			</el-col>
+			<el-col :span="1.5">
+				<el-button type="success" plain icon="el-icon-check" size="mini" @click="openEnableProject"
+					:disabled="enableBtnDisabled" v-hasPermi="['trial:prod:edit']">启用</el-button>
 			</el-col>
 			<el-col :span="1.5">
 				<el-button type="warning" plain icon="el-icon-switch-button" size="mini" @click="openCloseProject"
@@ -135,7 +151,8 @@
 		forkProd,
 		flowProd,
 		overProd,
-		listRelatedProd,
+		disableProd,
+		enableProd,
 		exportProdPdf,
 		printDetail
 	} from "@/api/trial/prod";
@@ -190,7 +207,18 @@ import selectRelated from "./selectRelated";
 				// 只有“单选”时才有意义；多选/未选中时保持 false
 				if (this.selectedStatus === null || this.selectedStatus === undefined) return false;
 				return String(this.selectedStatus) === "1" || String(this.selectedStatus) === "2";
-			}
+			},
+			// 停用/启用按钮禁用规则（0正常 1停用 2完成）
+			disableBtnDisabled() {
+				// 只有单选时允许操作；仅 0 -> 1 可停用
+				if (this.single) return true;
+				return String(this.selectedStatus) !== "0";
+			},
+			enableBtnDisabled() {
+				// 只有单选时允许操作；仅 1 -> 0 可启用
+				if (this.single) return true;
+				return String(this.selectedStatus) !== "1";
+			},
 		},
 		created() {
 			this.getList();
@@ -225,6 +253,28 @@ import selectRelated from "./selectRelated";
 					this.reset();
 					this.getList();
 				});
+			},
+			/** 停用任务 */
+			openDisableProject() {
+				this.taskId = this.ids[0];
+				const row = { taskId: this.taskId };
+				this.$modal.confirm('是否确认停用试制任务编号为"' + this.taskId + '"的数据项？').then(() => {
+					return disableProd(row);
+				}).then(() => {
+					this.$modal.msgSuccess("停用成功");
+					this.getList();
+				}).catch(() => {});
+			},
+			/** 启用任务 */
+			openEnableProject() {
+				this.taskId = this.ids[0];
+				const row = { taskId: this.taskId };
+				this.$modal.confirm('是否确认启用试制任务编号为"' + this.taskId + '"的数据项？').then(() => {
+					return enableProd(row);
+				}).then(() => {
+					this.$modal.msgSuccess("启用成功");
+					this.getList();
+				}).catch(() => {});
 			},
 			/** 查询关联卡片 */
 		openRelatedProject() {

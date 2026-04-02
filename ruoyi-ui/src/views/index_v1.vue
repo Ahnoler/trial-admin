@@ -12,21 +12,21 @@
         <div class="stat-card" @click="goTrialProd({ status: 0 })">
           <div class="stat-title">正常任务</div>
           <div class="stat-value">{{ stats.normal }}</div>
-          <div class="stat-sub">状态：0 正常</div>
+          <div class="stat-sub">点击查看正常任务</div>
         </div>
       </el-col>
       <el-col :xs="24" :sm="12" :lg="6">
         <div class="stat-card" @click="goTrialProd({ status: 1 })">
           <div class="stat-title">停用任务</div>
           <div class="stat-value">{{ stats.stopped }}</div>
-          <div class="stat-sub">状态：1 停用</div>
+          <div class="stat-sub">点击查看停用任务</div>
         </div>
       </el-col>
       <el-col :xs="24" :sm="12" :lg="6">
         <div class="stat-card" @click="goTrialProd({ status: 2 })">
           <div class="stat-title">完成任务</div>
           <div class="stat-value">{{ stats.finished }}</div>
-          <div class="stat-sub">状态：2 完成</div>
+          <div class="stat-sub">点击查看结束任务</div>
         </div>
       </el-col>
     </el-row>
@@ -40,7 +40,7 @@
           <div class="quick-actions">
             <el-button type="primary" plain icon="el-icon-s-operation" @click="go('/trial/prod')">试制任务管理</el-button>
             <el-button type="success" plain icon="el-icon-document" @click="go('/trial/prodDetail')">流转程序管理</el-button>
-            <el-button type="warning" plain icon="el-icon-folder" @click="go('/trial/projects')">项目管理</el-button>
+            <el-button type="warning" plain icon="el-icon-folder" @click="go('/trial/projects')">项目信息管理</el-button>
           </div>
         </el-card>
       </el-col>

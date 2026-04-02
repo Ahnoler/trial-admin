@@ -142,6 +142,38 @@ public class TrialTaskProdController extends BaseController {
         return toAjax(trialTaskProdService.updateTrialTaskProd(oldNode));
     }
 
+    @PostMapping("/disable")
+    @PreAuthorize("@ss.hasPermi('trial:prod:edit')")
+    @Log(title = "试制任务信息", businessType = BusinessType.UPDATE)
+    @ApiOperation(value = "停用零件流转卡")
+    public AjaxResult disable(@RequestBody TrialTaskProd trialTaskProd) {
+        TrialTaskProd oldNode = trialTaskProdService.selectTrialTaskProdByTaskId(trialTaskProd.getTaskId());
+        if (oldNode == null) {
+            return AjaxResult.error("未找到对应任务");
+        }
+        if (TaskStatus.FINISHED.getCode().equals(oldNode.getStatus())) {
+            return AjaxResult.error("任务已结束，无法停用");
+        }
+        oldNode.setStatus(TaskStatus.DISABLED.getCode());
+        return toAjax(trialTaskProdService.updateTrialTaskProd(oldNode));
+    }
+
+    @PostMapping("/enable")
+    @PreAuthorize("@ss.hasPermi('trial:prod:edit')")
+    @Log(title = "试制任务信息", businessType = BusinessType.UPDATE)
+    @ApiOperation(value = "启用零件流转卡")
+    public AjaxResult enable(@RequestBody TrialTaskProd trialTaskProd) {
+        TrialTaskProd oldNode = trialTaskProdService.selectTrialTaskProdByTaskId(trialTaskProd.getTaskId());
+        if (oldNode == null) {
+            return AjaxResult.error("未找到对应任务");
+        }
+        if (TaskStatus.FINISHED.getCode().equals(oldNode.getStatus())) {
+            return AjaxResult.error("任务已结束，无法启用");
+        }
+        oldNode.setStatus(TaskStatus.NORMAL.getCode());
+        return toAjax(trialTaskProdService.updateTrialTaskProd(oldNode));
+    }
+
     @ApiOperation(value = "导出零件流转卡详细信息为pdf")
     @PreAuthorize("@ss.hasPermi('trial:projects:export')")
     @Log(title = "试制任务信息", businessType = BusinessType.EXPORT)

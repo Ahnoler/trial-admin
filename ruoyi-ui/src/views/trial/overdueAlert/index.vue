@@ -32,14 +32,6 @@
 
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
-        <el-button type="success" plain icon="el-icon-check" size="mini" :disabled="multiple" @click="handleHandle"
-          v-hasPermi="['trial:overdueAlert:handle']">处理</el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button type="warning" plain icon="el-icon-close" size="mini" :disabled="multiple" @click="handleIgnore"
-          v-hasPermi="['trial:overdueAlert:ignore']">忽略</el-button>
-      </el-col>
-      <el-col :span="1.5">
         <el-button type="danger" plain icon="el-icon-delete" size="mini" :disabled="multiple" @click="handleDelete"
           v-hasPermi="['trial:overdueAlert:remove']">删除</el-button>
       </el-col>
@@ -290,13 +282,6 @@ export default {
         handleRemark: null
       };
     },
-    handleHandle() {
-      this.handleForm = {
-        alertIds: this.ids,
-        handleRemark: ""
-      };
-      this.handleOpen = true;
-    },
     handleHandleSingle(row) {
       this.handleForm = {
         alertIds: [row.alertId],
@@ -310,13 +295,6 @@ export default {
         this.handleOpen = false;
         this.getList();
       });
-    },
-    handleIgnore() {
-      this.ignoreForm = {
-        alertIds: this.ids,
-        handleRemark: ""
-      };
-      this.ignoreOpen = true;
     },
     handleIgnoreSingle(row) {
       this.ignoreForm = {
