@@ -69,13 +69,14 @@
                 '%')
             </if>
             <if test="assemblyFigure != null  and assemblyFigure != ''">and assembly_figure = #{assemblyFigure}</if>
-            <if test="pm != null  and pm != ''">and pm = #{pm}</if>
-            <if test="pe != null  and pe != ''">and pe = #{pe}</if>
+            <if test="pm != null  and pm != ''">and pm like concat('%', #{pm}, '%')</if>
+            <if test="pe != null  and pe != ''">and pe like concat('%', #{pe}, '%')</if>
             <if test="currentSerialNo != null ">and current_serial_no = #{currentSerialNo}</if>
             <if test="currentSerialName != null  and currentSerialName != ''">and current_serial_name like concat('%',
                 #{currentSerialName}, '%')
             </if>
             <if test="status != null  and status != ''">and status = #{status}</if>
+            <if test="createBy != null and createBy != ''">and create_by = #{createBy}</if>
         </where>
     </select>
 

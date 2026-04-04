@@ -46,6 +46,7 @@ public class TrialTaskProdController extends BaseController {
     @PreAuthorize("@ss.hasPermi('trial:prod:add')")
     @Log(title = "试制任务信息", businessType = BusinessType.INSERT)
     public AjaxResult add(@RequestBody TrialTaskProd trialTaskProd) {
+        trialTaskProd.setCreateBy(getUsername());
         return toAjax(trialTaskProdService.insertTrialTaskProd(trialTaskProd));
     }
 
@@ -87,7 +88,11 @@ public class TrialTaskProdController extends BaseController {
     @GetMapping("/list")
     @ApiOperation(value = "获取零件流转卡列表")
     @PreAuthorize("@ss.hasPermi('trial:prod:list')")
-    public TableDataInfo list(TrialTaskProd trialTaskProd) {
+    public TableDataInfo list(TrialTaskProd trialTaskProd,
+            @RequestParam(required = false) Boolean onlyMine) {
+        if (Boolean.TRUE.equals(onlyMine)) {
+            trialTaskProd.setCreateBy(getUsername());
+        }
         startPage();
         List<TrialTaskProd> list = trialTaskProdService.selectTrialTaskProdList(trialTaskProd);
         return getDataTable(list);

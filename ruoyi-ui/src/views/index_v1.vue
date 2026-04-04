@@ -9,21 +9,21 @@
         </div>
       </el-col>
       <el-col :xs="24" :sm="12" :lg="6">
-        <div class="stat-card" @click="goTrialProd({ status: 0 })">
+        <div class="stat-card" @click="goTrialProd({ status: '0' })">
           <div class="stat-title">正常任务</div>
           <div class="stat-value">{{ stats.normal }}</div>
           <div class="stat-sub">点击查看正常任务</div>
         </div>
       </el-col>
       <el-col :xs="24" :sm="12" :lg="6">
-        <div class="stat-card" @click="goTrialProd({ status: 1 })">
+        <div class="stat-card" @click="goTrialProd({ status: '1' })">
           <div class="stat-title">停用任务</div>
           <div class="stat-value">{{ stats.stopped }}</div>
           <div class="stat-sub">点击查看停用任务</div>
         </div>
       </el-col>
       <el-col :xs="24" :sm="12" :lg="6">
-        <div class="stat-card" @click="goTrialProd({ status: 2 })">
+        <div class="stat-card" @click="goTrialProd({ status: '2' })">
           <div class="stat-title">完成任务</div>
           <div class="stat-value">{{ stats.finished }}</div>
           <div class="stat-sub">点击查看结束任务</div>
@@ -43,24 +43,40 @@
             <el-button type="warning" plain icon="el-icon-folder" @click="go('/trial/projects')">项目信息管理</el-button>
           </div>
         </el-card>
-      </el-col>
-
-      <el-col :xs="24" :lg="16">
         <el-card shadow="never">
+          <div slot="header" class="card-header">
+            <span>我负责的试制任务</span>
+            <el-button type="text" @click="goTrialProd({ onlyMine: 'true' })">更多</el-button>
+          </div>
+          <el-table v-loading="loadingMine" :data="myTasks" size="mini" @row-click="openTask">
+            <el-table-column label="任务编号" prop="taskId" width="90" />
+            <el-table-column label="卡片名称" prop="title"/>
+
+            <el-table-column label="状态" prop="status" width="90">
+              <template slot-scope="scope">
+                <dict-tag :options="dict.type.task_status" :value="scope.row.status" />
+              </template>
+            </el-table-column>
+            <el-table-column label="当前工序" prop="currentSerialName"/>
+          </el-table>
+        </el-card>
+      </el-col>
+      <el-col :xs="24" :lg="16">
+        <el-card shadow="never" class="stack-card">
           <div slot="header" class="card-header">
             <span>最近试制任务</span>
             <el-button type="text" @click="go('/trial/prod')">更多</el-button>
           </div>
           <el-table v-loading="loadingRecent" :data="recentTasks" size="mini" @row-click="openTask">
             <el-table-column label="任务编号" prop="taskId" width="90" />
-            <el-table-column label="卡片名称" prop="title" min-width="180" />
-            <el-table-column label="所属项目" prop="projectName" min-width="160" />
-            <el-table-column label="状态" prop="status" width="90">
+            <el-table-column label="卡片名称" prop="title"/>
+            <el-table-column label="所属项目" prop="projectName"/>
+            <el-table-column label="状态" prop="status" width="140">
               <template slot-scope="scope">
                 <dict-tag :options="dict.type.task_status" :value="scope.row.status" />
               </template>
             </el-table-column>
-            <el-table-column label="当前工序" prop="currentSerialName" min-width="140" />
+            <el-table-column label="当前工序" prop="currentSerialName" width="0" />
           </el-table>
         </el-card>
       </el-col>
@@ -77,6 +93,7 @@ export default {
   data() {
     return {
       loadingRecent: false,
+      loadingMine: false,
       stats: {
         total: 0,
         normal: 0,
@@ -84,11 +101,13 @@ export default {
         finished: 0,
       },
       recentTasks: [],
+      myTasks: [],
     }
   },
   created() {
     this.loadStats();
     this.loadRecent();
+    this.loadMyTasks();
   },
   methods: {
     go(path) {
@@ -106,9 +125,9 @@ export default {
       const base = { pageNum: 1, pageSize: 1 };
       const [all, normal, stopped, finished] = await Promise.all([
         listTrialProd({ ...base }),
-        listTrialProd({ ...base, status: 0 }),
-        listTrialProd({ ...base, status: 1 }),
-        listTrialProd({ ...base, status: 2 }),
+        listTrialProd({ ...base, status: "0" }),
+        listTrialProd({ ...base, status: "1" }),
+        listTrialProd({ ...base, status: "2" }),
       ]);
       this.stats.total = all.total || 0;
       this.stats.normal = normal.total || 0;
@@ -117,12 +136,33 @@ export default {
     },
     loadRecent() {
       this.loadingRecent = true;
-      listTrialProd({ pageNum: 1, pageSize: 8 })
+      listTrialProd({
+        pageNum: 1,
+        pageSize: 8,
+        orderByColumn: "createTime",
+        isAsc: "desc",
+      })
         .then((res) => {
           this.recentTasks = res.rows || [];
         })
         .finally(() => {
           this.loadingRecent = false;
+        });
+    },
+    loadMyTasks() {
+      this.loadingMine = true;
+      listTrialProd({
+        pageNum: 1,
+        pageSize: 8,
+        onlyMine: true,
+        orderByColumn: "createTime",
+        isAsc: "desc",
+      })
+        .then((res) => {
+          this.myTasks = res.rows || [];
+        })
+        .finally(() => {
+          this.loadingMine = false;
         });
     },
   },
@@ -184,5 +224,9 @@ export default {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
+}
+
+.stack-card {
+  margin-top: 16px;
 }
 </style>

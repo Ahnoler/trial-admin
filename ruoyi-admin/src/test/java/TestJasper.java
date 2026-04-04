@@ -2,6 +2,7 @@ import com.ruoyi.RuoYiApplication;
 import domain.User;
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -24,6 +25,7 @@ import java.util.Map;
 
 //@SpringBootTest(classes = RuoYiApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 //@RunWith(SpringJUnit4ClassRunner.class)
+@Ignore("Manual Jasper/local DB tests; paths and DB are machine-specific")
 public class TestJasper {
     String username = System.getenv("USERNAME");
 

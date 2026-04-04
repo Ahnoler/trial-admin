@@ -42,13 +42,13 @@
 			</el-row>
 			<el-row :gutter="10">
 				<el-col :span="8">
-					<el-form-item label="试制管理员/电话" prop="pm">
-						<el-input v-model="queryParams.pm" placeholder="请输入试制管理员/电话" clearable @keyup.enter.native="handleQuery" />
+					<el-form-item label="试制管理员" prop="pm">
+						<el-input v-model="queryParams.pm" placeholder="姓名或电话，支持模糊查询" clearable @keyup.enter.native="handleQuery" />
 					</el-form-item>
 				</el-col>
 				<el-col :span="8">
-					<el-form-item label="PE姓名/电话" prop="pe">
-						<el-input v-model="queryParams.pe" placeholder="请输入PE姓名/电话" clearable @keyup.enter.native="handleQuery" />
+					<el-form-item label="PE姓名" prop="pe">
+						<el-input v-model="queryParams.pe" placeholder="姓名或电话，支持模糊查询" clearable @keyup.enter.native="handleQuery" />
 					</el-form-item>
 				</el-col>
 				<el-col :span="8">
@@ -114,7 +114,7 @@
 			<right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
 		</el-row>
 
-		<el-table v-loading="loading" :data="prodList" @selection-change="handleSelectionChange">
+		<el-table v-loading="loading" :data="prodList" row-key="taskId" @selection-change="handleSelectionChange">
 			<el-table-column type="selection" width="55" align="center" />
 			<el-table-column label="任务编号" align="center" prop="taskId" />
 			<el-table-column label="所属项目" align="center" prop="projectName" />
@@ -126,8 +126,28 @@
 			</el-table-column>
 			<el-table-column label="总成名称" align="center" prop="assemblyName" />
 			<el-table-column label="总成图号" align="center" prop="assemblyFigure" />
-			<el-table-column label="试制管理员/电话" align="center" prop="pm" />
-			<el-table-column label="PE姓名/电话" align="center" prop="pe" />
+			<el-table-column label="试制管理员" align="center" min-width="100">
+				<template slot-scope="scope">
+					<el-button
+						v-if="scope.row.pm"
+						type="text"
+						class="contact-link"
+						@click.stop="openContactDialog('试制管理员/电话', scope.row.pm)"
+					>{{ contactDisplayName(scope.row.pm) }}</el-button>
+					<span v-else>—</span>
+				</template>
+			</el-table-column>
+			<el-table-column label="PE姓名" align="center" min-width="100">
+				<template slot-scope="scope">
+					<el-button
+						v-if="scope.row.pe"
+						type="text"
+						class="contact-link"
+						@click.stop="openContactDialog('PE姓名/电话', scope.row.pe)"
+					>{{ contactDisplayName(scope.row.pe) }}</el-button>
+					<span v-else>—</span>
+				</template>
+			</el-table-column>
 			<el-table-column label="备注" align="center" prop="remark" />
 			<el-table-column label="状态" align="center" prop="status" width="100">
 				<template slot-scope="scope">
@@ -141,6 +161,13 @@
 			@pagination="getList" />
 		<select-project ref="select" :pm="queryParams.pm" @ok="handleQueryProject" />
 		<selectRelated ref="related" :taskId="taskId" :title="''" />
+
+		<el-dialog :title="contactDialogTitle" :visible.sync="contactDialogVisible" width="480px" append-to-body @close="contactDialogText = ''">
+			<div class="contact-dialog-body">{{ contactDialogText }}</div>
+			<div slot="footer" class="dialog-footer">
+				<el-button type="primary" @click="contactDialogVisible = false">关 闭</el-button>
+			</div>
+		</el-dialog>
 	</div>
 </template>
 
@@ -197,9 +224,13 @@ import selectRelated from "./selectRelated";
 					pm: null,
 					pe: null,
 					status: null,
+					onlyMine: null,
 				},
 				// 当前选中任务状态（0正常 1停用 2完成）
 				selectedStatus: null,
+				contactDialogVisible: false,
+				contactDialogTitle: "",
+				contactDialogText: "",
 			};
 		},
 		computed: {
@@ -220,15 +251,63 @@ import selectRelated from "./selectRelated";
 				return String(this.selectedStatus) !== "1";
 			},
 		},
-		created() {
-			this.getList();
-		},
-		activated() {
-			if (this.$route && this.$route.query && this.$route.query.t) {
-				this.getList();
-			}
+		watch: {
+			$route: {
+				handler(to, from) {
+					if (to.path !== "/trial/prod") {
+						return;
+					}
+					if (from && to.fullPath === from.fullPath) {
+						return;
+					}
+					this.applyRouteQuery();
+					if (from) {
+						this.queryParams.pageNum = 1;
+					}
+					this.getList();
+				},
+				immediate: true,
+			},
 		},
 		methods: {
+			/** 从「姓名/电话」类字符串中取展示用姓名 */
+			contactDisplayName(val) {
+				if (val == null || val === "") {
+					return "—";
+				}
+				const s = String(val).trim();
+				const bySlash = s.split(/[/|｜]/);
+				if (bySlash.length > 1) {
+					return bySlash[0].trim() || s;
+				}
+				const m = s.match(/^(.+?)[\s,，]+([\d\s\-+()（）]{6,})$/);
+				if (m) {
+					return m[1].trim() || s;
+				}
+				return s;
+			},
+			openContactDialog(title, fullText) {
+				if (!fullText) {
+					return;
+				}
+				this.contactDialogTitle = title;
+				this.contactDialogText = String(fullText).trim();
+				this.contactDialogVisible = true;
+			},
+			applyRouteQuery() {
+				const q = (this.$route && this.$route.query) || {};
+				// 路由里 status=0 时 query 为字符串 '0'，需与字典 el-option 的 value 类型一致
+				if (q.status !== undefined && q.status !== null && String(q.status).trim() !== "") {
+					this.queryParams.status = String(q.status);
+				} else {
+					this.queryParams.status = null;
+				}
+				if (q.onlyMine === "true" || q.onlyMine === true) {
+					this.queryParams.onlyMine = true;
+				} else {
+					this.queryParams.onlyMine = null;
+				}
+			},
 			/** 打开变更表弹窗 */
 			openFlowProject() {
 				this.taskId = this.ids[0];
@@ -355,7 +434,11 @@ import selectRelated from "./selectRelated";
 			/** 查询试制任务信息列表 */
 			getList() {
 				this.loading = true;
-				listProd(this.queryParams).then(response => {
+				const params = { ...this.queryParams };
+				if (!params.onlyMine) {
+					delete params.onlyMine;
+				}
+				listProd(params).then(response => {
 					this.prodList = response.rows;
 					this.total = response.total;
 					this.loading = false;
@@ -389,6 +472,8 @@ import selectRelated from "./selectRelated";
 			/** 重置按钮操作 */
 			resetQuery() {
 				this.resetForm("queryForm");
+				this.queryParams.onlyMine = null;
+				this.$router.replace({ path: this.$route.path, query: {} }).catch(() => {});
 				this.handleQuery();
 			},
 			// 多选框选中数据
@@ -446,3 +531,14 @@ import selectRelated from "./selectRelated";
 		}
 	};
 </script>
+
+<style lang="scss" scoped>
+.contact-link {
+	padding: 0;
+}
+.contact-dialog-body {
+	white-space: pre-wrap;
+	word-break: break-all;
+	line-height: 1.6;
+}
+</style>
